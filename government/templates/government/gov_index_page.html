@@ -85,5 +85,7 @@
         </div>
         {% endfor %}
     </div>
+
+    {% include "includes/pagination.html" with page_obj=items %}
 </div>
 {% endblock %}

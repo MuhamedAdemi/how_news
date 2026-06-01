@@ -1,3 +1,4 @@
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 
 from wagtail.models import Page
@@ -42,7 +43,12 @@ class GovIndexPage(Page):
         if status:
             items = items.filter(status=status)
 
-        context["items"] = items
+        paginator = Paginator(items, 9)
+        page_num = request.GET.get("faqe", 1)
+        try:
+            context["items"] = paginator.page(page_num)
+        except (PageNotAnInteger, EmptyPage):
+            context["items"] = paginator.page(1)
         context["item_types"] = GovItemType.choices
         context["statuses"] = GovItemStatus.choices
         context["current_type"] = item_type

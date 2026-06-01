@@ -1,3 +1,4 @@
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 
 from wagtail.models import Page
@@ -32,7 +33,12 @@ class VideoIndexPage(Page):
         videos = VideoPage.objects.child_of(self).live().order_by("-first_published_at")
         if category:
             videos = videos.filter(category=category)
-        context["videos"] = videos
+        paginator = Paginator(videos, 9)
+        page_num = request.GET.get("faqe", 1)
+        try:
+            context["videos"] = paginator.page(page_num)
+        except (PageNotAnInteger, EmptyPage):
+            context["videos"] = paginator.page(1)
         context["categories"] = VideoCategory.choices
         context["current_category"] = category
         return context

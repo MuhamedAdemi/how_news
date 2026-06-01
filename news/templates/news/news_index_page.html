@@ -51,5 +51,7 @@
         </div>
         {% endfor %}
     </div>
+
+    {% include "includes/pagination.html" with page_obj=articles %}
 </div>
 {% endblock %}

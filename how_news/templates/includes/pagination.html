@@ -1,0 +1,54 @@
+{% comment %}
+Usage: {% include "includes/pagination.html" with page_obj=articles %}
+The 'page_obj' variable must be a Django Page object from Paginator.
+URL query param used: 'faqe'
+{% endcomment %}
+{% if page_obj.has_other_pages %}
+<nav aria-label="Navigim faqesh" class="mt-5 d-flex justify-content-center">
+    <ul class="pagination pagination-sm gap-1">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link rounded" href="?faqe={{ page_obj.previous_page_number }}" aria-label="E mëparshme">
+                &laquo;
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link rounded">&laquo;</span>
+        </li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+            <li class="page-item active">
+                <span class="page-link rounded">{{ num }}</span>
+            </li>
+            {% elif num >= page_obj.number|add:"-3" and num <= page_obj.number|add:"3" %}
+            <li class="page-item">
+                <a class="page-link rounded" href="?faqe={{ num }}">{{ num }}</a>
+            </li>
+            {% elif num == 1 or num == page_obj.paginator.num_pages %}
+            <li class="page-item">
+                <a class="page-link rounded" href="?faqe={{ num }}">{{ num }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link rounded" href="?faqe={{ page_obj.next_page_number }}" aria-label="Tjetri">
+                &raquo;
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link rounded">&raquo;</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+<p class="text-center text-muted small mt-2">
+    Faqja {{ page_obj.number }} nga {{ page_obj.paginator.num_pages }}
+    &mdash; gjithsej {{ page_obj.paginator.count }} rezultate
+</p>
+{% endif %}

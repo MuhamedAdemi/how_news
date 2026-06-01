@@ -2,8 +2,12 @@ venv/
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
 db.sqlite3
 media/
 static/
 .env
 *.log
+how_news/settings/local.py
+.DS_Store
+Thumbs.db
