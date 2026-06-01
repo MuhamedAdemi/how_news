@@ -61,22 +61,23 @@ class Command(BaseCommand):
         total_created = 0
 
         for source in sources:
-            self.stdout.write(f"\n📡 Duke marrë: {source.name} ({source.feed_url})")
+            self.stdout.write(f"\n[>>] Duke marre: {source.name} ({source.feed_url})")
 
             try:
+                # Ri-merr news_index nga DB para cdo burimi per te shmangur cache probleme
+                news_index = NewsIndexPage.objects.live().get(pk=news_index.pk)
                 created = self._fetch_source(source, news_index, limit)
                 total_created += created
-                self.stdout.write(self.style.SUCCESS(f"   ✓ {created} artikuj të rinj"))
+                self.stdout.write(self.style.SUCCESS(f"   [OK] {created} artikuj te rinj"))
 
-                # Regjistro kohën e fundit të fetch-it
                 source.last_fetched = timezone.now()
                 source.save(update_fields=["last_fetched"])
 
             except Exception as e:
-                self.stderr.write(self.style.ERROR(f"   ✗ Gabim: {e}"))
+                self.stderr.write(self.style.ERROR(f"   [ERR] Gabim: {e}"))
 
         self.stdout.write(self.style.SUCCESS(
-            f"\n✅ Gjithsej {total_created} artikuj të rinj u krijuan."
+            f"\n[DONE] Gjithsej {total_created} artikuj te rinj u krijuan."
         ))
 
     def _fetch_source(self, source, news_index, limit):
@@ -86,7 +87,7 @@ class Command(BaseCommand):
         if feed.bozo:
             # feedparser.bozo = True kur ka problem me feed-in
             self.stdout.write(self.style.WARNING(
-                f"   ⚠ Feed ka probleme formatimi, po provojmë gjithsesi..."
+                "   [!] Feed ka probleme formatimi, po provojme gjithsesi..."
             ))
 
         created_count = 0
@@ -128,7 +129,6 @@ class Command(BaseCommand):
             news_index.add_child(instance=article)
 
             # Publiko menjëherë
-            article.get_latest_revision_as_object()
             revision = article.save_revision()
             revision.publish()
 

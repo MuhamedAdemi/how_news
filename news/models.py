@@ -118,7 +118,7 @@ class NewsArticlePage(Page):
     intro = models.TextField(max_length=500, blank=True)
 
     # URL origjinale e lajmit — përdoret për të shmangur duplikatet
-    source_url = models.URLField(blank=True, db_index=True)
+    source_url = models.URLField(max_length=500, blank=True, db_index=True)
     source_name = models.CharField(max_length=100, blank=True)
 
     # StreamField - redaktori shton paragrafë, foto, citate lirisht
