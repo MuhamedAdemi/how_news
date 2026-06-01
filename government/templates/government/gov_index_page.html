@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block title %}Qeveria e Thjeshtë{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="fw-bold"><i class="bi bi-building me-2 text-success"></i>Qeveria e Thjeshtë</h1>
+            <p class="lead text-muted">Konkurse, grante, fonde dhe njoftime qeveritare — të shpjeguara qartë.</p>
+        </div>
+    </div>
+
+    <!-- Filtrat -->
+    <div class="row mb-4">
+        <div class="col">
+            <form method="get" class="d-flex flex-wrap gap-2">
+                <select name="type" class="form-select form-select-sm w-auto">
+                    <option value="">Të gjitha llojet</option>
+                    {% for value, label in item_types %}
+                        <option value="{{ value }}" {% if current_type == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <select name="status" class="form-select form-select-sm w-auto">
+                    {% for value, label in statuses %}
+                        <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-success btn-sm">
+                    <i class="bi bi-funnel me-1"></i>Filtro
+                </button>
+                <a href="/qeveria/" class="btn btn-outline-secondary btn-sm">Pastro</a>
+            </form>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        {% for item in items %}
+        <div class="col">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge
+                            {% if item.item_type == 'grant' %}bg-success
+                            {% elif item.item_type == 'tender' %}bg-primary
+                            {% elif item.item_type == 'competition' %}bg-warning text-dark
+                            {% elif item.item_type == 'law' %}bg-secondary
+                            {% else %}bg-info text-dark{% endif %}">
+                            {{ item.get_item_type_display }}
+                        </span>
+                        <span class="badge {% if item.status == 'active' %}bg-success{% elif item.status == 'upcoming' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                            {{ item.get_status_display }}
+                        </span>
+                    </div>
+                    <h5 class="card-title">{{ item.title }}</h5>
+                    {% if item.institution %}
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-building me-1"></i>{{ item.institution }}
+                        </p>
+                    {% endif %}
+                    {% if item.budget %}
+                        <p class="text-success fw-bold small mb-1">
+                            <i class="bi bi-cash me-1"></i>{{ item.budget }}
+                        </p>
+                    {% endif %}
+                    {% if item.deadline %}
+                        <p class="small mb-2 {% if item.status == 'expired' %}text-danger{% else %}text-warning{% endif %}">
+                            <i class="bi bi-clock me-1"></i>Afati: {{ item.deadline|date:"d M Y" }}
+                        </p>
+                    {% endif %}
+                </div>
+                <div class="card-footer border-0 bg-transparent">
+                    <a href="{{ item.url }}" class="btn btn-success btn-sm w-100">
+                        <i class="bi bi-info-circle me-1"></i>Shiko shpjegimin
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>Nuk ka njoftime aktive. Shto nga paneli admin.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

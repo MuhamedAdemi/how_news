@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}HoW News — Informacion qytetar{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<div class="bg-dark text-white py-5">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold"><span class="text-warning">HoW</span> News</h1>
+        <p class="lead">Informacion qytetar, qeveria e thjeshtë dhe edukim nga House of Wisdom</p>
+        <div class="d-flex justify-content-center gap-2 mt-3">
+            <a href="/lajme/" class="btn btn-primary">
+                <i class="bi bi-newspaper me-1"></i>Lajme
+            </a>
+            <a href="/qeveria/" class="btn btn-success">
+                <i class="bi bi-building me-1"></i>Qeveria e Thjeshtë
+            </a>
+            <a href="/video/" class="btn btn-danger">
+                <i class="bi bi-play-circle me-1"></i>Video
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Bloku 1: Lajmet e fundit -->
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0"><i class="bi bi-newspaper me-2 text-primary"></i>Lajmet e Fundit</h2>
+        <a href="/lajme/" class="btn btn-sm btn-outline-primary">Të gjitha lajmet</a>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for article in latest_news %}
+        <div class="col">
+            <div class="card h-100 shadow-sm border-0">
+                {% if article.cover_image %}
+                    {% image article.cover_image fill-400x200 as img %}
+                    <img src="{{ img.url }}" class="card-img-top" style="height:160px;object-fit:cover;" alt="{{ article.title }}">
+                {% else %}
+                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height:160px;">
+                        <i class="bi bi-newspaper text-white fs-2"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <h6 class="card-title fw-bold">{{ article.title }}</h6>
+                    <p class="text-muted small">{{ article.intro|truncatewords:12 }}</p>
+                </div>
+                <div class="card-footer border-0 bg-transparent">
+                    <a href="{{ article.url }}" class="btn btn-sm btn-outline-primary w-100">Lexo</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-muted">Artikujt do të shfaqen këtu.</div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Bloku 2: Qeveria e thjeshtë -->
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0"><i class="bi bi-building me-2 text-success"></i>Qeveria e Thjeshtë</h2>
+            <a href="/qeveria/" class="btn btn-sm btn-outline-success">Shiko të gjitha</a>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 g-3">
+            {% for item in active_gov_items %}
+            <div class="col">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="badge
+                                {% if item.item_type == 'grant' %}bg-success
+                                {% elif item.item_type == 'tender' %}bg-primary
+                                {% elif item.item_type == 'competition' %}bg-warning text-dark
+                                {% else %}bg-secondary{% endif %}">
+                                {{ item.get_item_type_display }}
+                            </span>
+                            {% if item.deadline %}
+                                <small class="text-warning">
+                                    <i class="bi bi-clock me-1"></i>{{ item.deadline|date:"d M Y" }}
+                                </small>
+                            {% endif %}
+                        </div>
+                        <h6 class="fw-bold">{{ item.title }}</h6>
+                        {% if item.budget %}
+                            <p class="text-success small mb-1">
+                                <i class="bi bi-cash me-1"></i>{{ item.budget }}
+                            </p>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer border-0 bg-transparent">
+                        <a href="{{ item.url }}" class="btn btn-sm btn-success w-100">Shiko shpjegimin</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-muted">Njoftimet do të shfaqen këtu.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Bloku 3: Video HoW -->
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0"><i class="bi bi-play-circle me-2 text-danger"></i>Video HoW</h2>
+        <a href="/video/" class="btn btn-sm btn-outline-danger">Të gjitha videot</a>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for video in latest_videos %}
+        <div class="col">
+            <div class="card border-0 shadow-sm h-100">
+                {% if video.cover_image %}
+                    {% image video.cover_image fill-400x225 as img %}
+                    <div class="position-relative">
+                        <img src="{{ img.url }}" class="card-img-top" style="height:160px;object-fit:cover;" alt="{{ video.title }}">
+                        <div class="position-absolute top-50 start-50 translate-middle">
+                            <i class="bi bi-play-circle-fill text-white fs-1" style="text-shadow:0 0 10px #000;"></i>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="card-img-top bg-dark d-flex align-items-center justify-content-center" style="height:160px;">
+                        <i class="bi bi-play-circle text-white fs-2"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <h6 class="fw-bold">{{ video.title }}</h6>
+                    {% if video.presenter %}
+                        <p class="text-muted small mb-0"><i class="bi bi-person me-1"></i>{{ video.presenter }}</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer border-0 bg-transparent">
+                    <a href="{{ video.url }}" class="btn btn-sm btn-danger w-100">
+                        <i class="bi bi-play me-1"></i>Shiko
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-muted">Videot do të shfaqen këtu.</div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

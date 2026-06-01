@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Kryefaqja</a></li>
+                    <li class="breadcrumb-item"><a href="/qeveria/">Qeveria e Thjeshtë</a></li>
+                    <li class="breadcrumb-item active">{{ page.title }}</li>
+                </ol>
+            </nav>
+
+            <div class="d-flex gap-2 mb-3">
+                <span class="badge
+                    {% if page.item_type == 'grant' %}bg-success
+                    {% elif page.item_type == 'tender' %}bg-primary
+                    {% elif page.item_type == 'competition' %}bg-warning text-dark
+                    {% elif page.item_type == 'law' %}bg-secondary
+                    {% else %}bg-info text-dark{% endif %} fs-6">
+                    {{ page.get_item_type_display }}
+                </span>
+                <span class="badge {% if page.status == 'active' %}bg-success{% elif page.status == 'upcoming' %}bg-warning text-dark{% else %}bg-secondary{% endif %} fs-6">
+                    {{ page.get_status_display }}
+                </span>
+            </div>
+
+            <h1 class="fw-bold mb-4">{{ page.title }}</h1>
+
+            <!-- Detajet kryesore -->
+            <div class="card bg-light border-0 mb-4">
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% if page.institution %}
+                        <div class="col-sm-6">
+                            <small class="text-muted d-block">Institucioni</small>
+                            <strong><i class="bi bi-building me-1"></i>{{ page.institution }}</strong>
+                        </div>
+                        {% endif %}
+                        {% if page.budget %}
+                        <div class="col-sm-6">
+                            <small class="text-muted d-block">Shuma / Buxheti</small>
+                            <strong class="text-success"><i class="bi bi-cash me-1"></i>{{ page.budget }}</strong>
+                        </div>
+                        {% endif %}
+                        {% if page.deadline %}
+                        <div class="col-sm-6">
+                            <small class="text-muted d-block">Afati i fundit</small>
+                            <strong class="{% if page.status == 'expired' %}text-danger{% else %}text-warning{% endif %}">
+                                <i class="bi bi-clock me-1"></i>{{ page.deadline|date:"d M Y" }}
+                            </strong>
+                        </div>
+                        {% endif %}
+                        {% if page.original_url %}
+                        <div class="col-sm-6">
+                            <small class="text-muted d-block">Dokumenti zyrtar</small>
+                            <a href="{{ page.original_url }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-box-arrow-up-right me-1"></i>Shiko burimin
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shpjegimi i thjeshtë - kjo është vlera kryesore -->
+            <div class="card border-success mb-4">
+                <div class="card-header bg-success text-white">
+                    <i class="bi bi-lightbulb me-2"></i>Shpjegimi i thjeshtë
+                </div>
+                <div class="card-body">
+                    {{ page.simple_explanation|richtext }}
+                </div>
+            </div>
+
+            <!-- Hapat e aplikimit -->
+            {% if page.how_to_apply %}
+            <h4 class="fw-bold mb-3"><i class="bi bi-list-check me-2"></i>Si të aplikosh</h4>
+            {% for block in page.how_to_apply %}
+                {% if block.block_type == 'step' %}
+                <div class="d-flex mb-3">
+                    <div class="flex-shrink-0 me-3">
+                        <span class="badge bg-success rounded-circle p-2" style="width:35px;height:35px;display:flex;align-items:center;justify-content:center;">
+                            {{ block.value.number }}
+                        </span>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1">{{ block.value.title }}</h6>
+                        <div class="text-muted">{{ block.value.description|richtext }}</div>
+                    </div>
+                </div>
+                {% elif block.block_type == 'document_needed' %}
+                <div class="d-flex align-items-center mb-2">
+                    <i class="bi bi-file-earmark-check text-success me-2"></i>
+                    <span>{{ block.value }}</span>
+                </div>
+                {% elif block.block_type == 'external_link' %}
+                <div class="mb-2">
+                    <a href="{{ block.value.url }}" target="_blank" class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-box-arrow-up-right me-1"></i>{{ block.value.title }}
+                    </a>
+                </div>
+                {% endif %}
+            {% endfor %}
+            {% endif %}
+
+            <a href="/qeveria/" class="btn btn-outline-success mt-4">
+                <i class="bi bi-arrow-left me-1"></i>Kthehu
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

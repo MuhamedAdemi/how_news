@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Kryefaqja</a></li>
+                    <li class="breadcrumb-item"><a href="/lajme/">Lajme</a></li>
+                    <li class="breadcrumb-item active">{{ page.title }}</li>
+                </ol>
+            </nav>
+
+            {% if page.category %}
+                <span class="badge bg-primary mb-2">{{ page.category.name }}</span>
+            {% endif %}
+
+            <h1 class="fw-bold mb-3">{{ page.title }}</h1>
+
+            <div class="d-flex align-items-center text-muted mb-4 gap-3">
+                <span><i class="bi bi-calendar3 me-1"></i>{{ page.first_published_at|date:"d M Y" }}</span>
+                {% if page.tags.all %}
+                    <span>
+                        <i class="bi bi-tags me-1"></i>
+                        {% for tag in page.tags.all %}
+                            <span class="badge bg-secondary">{{ tag }}</span>
+                        {% endfor %}
+                    </span>
+                {% endif %}
+            </div>
+
+            {% if page.cover_image %}
+                {% image page.cover_image width-800 as img %}
+                <img src="{{ img.url }}" class="img-fluid rounded mb-4 w-100" alt="{{ page.title }}" style="max-height:400px;object-fit:cover;">
+            {% endif %}
+
+            {% if page.intro %}
+                <p class="lead border-start border-primary border-3 ps-3 mb-4">{{ page.intro }}</p>
+            {% endif %}
+
+            <!-- Trupi i artikullit - StreamField -->
+            <div class="article-body">
+                {% for block in page.body %}
+                    {% if block.block_type == 'paragraph' %}
+                        <div class="mb-3">{{ block.value|richtext }}</div>
+
+                    {% elif block.block_type == 'image' %}
+                        {% image block.value width-700 as img %}
+                        <figure class="figure w-100 mb-3">
+                            <img src="{{ img.url }}" class="figure-img img-fluid rounded">
+                        </figure>
+
+                    {% elif block.block_type == 'quote' %}
+                        <blockquote class="blockquote border-start border-warning border-3 ps-3 my-4">
+                            <p class="fst-italic">"{{ block.value.text }}"</p>
+                            {% if block.value.author %}
+                                <footer class="blockquote-footer">{{ block.value.author }}</footer>
+                            {% endif %}
+                        </blockquote>
+
+                    {% elif block.block_type == 'external_link' %}
+                        <div class="mb-3">
+                            <a href="{{ block.value.url }}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-box-arrow-up-right me-1"></i>{{ block.value.title }}
+                            </a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <a href="/lajme/" class="btn btn-outline-primary mt-4">
+                <i class="bi bi-arrow-left me-1"></i>Kthehu te Lajmet
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

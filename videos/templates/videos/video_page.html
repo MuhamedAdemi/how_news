@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags wagtailembeds_tags %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Kryefaqja</a></li>
+                    <li class="breadcrumb-item"><a href="/video/">Video HoW</a></li>
+                    <li class="breadcrumb-item active">{{ page.title }}</li>
+                </ol>
+            </nav>
+
+            <span class="badge bg-danger mb-2">{{ page.get_category_display }}</span>
+            <h1 class="fw-bold mb-3">{{ page.title }}</h1>
+
+            <div class="d-flex flex-wrap gap-3 text-muted mb-4">
+                {% if page.presenter %}
+                    <span><i class="bi bi-person me-1"></i>{{ page.presenter }}</span>
+                {% endif %}
+                {% if page.duration_minutes %}
+                    <span><i class="bi bi-clock me-1"></i>{{ page.duration_minutes }} minuta</span>
+                {% endif %}
+                <span><i class="bi bi-calendar3 me-1"></i>{{ page.first_published_at|date:"d M Y" }}</span>
+            </div>
+
+            <!-- Embed video - Wagtail e bën automatikisht nga URL YouTube/Vimeo -->
+            <div class="ratio ratio-16x9 mb-4 rounded overflow-hidden shadow">
+                {% embed page.video_url %}
+            </div>
+
+            {% if page.description %}
+            <div class="card border-0 bg-light">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-info-circle me-2"></i>Rreth Videos</h5>
+                    {{ page.description|richtext }}
+                </div>
+            </div>
+            {% endif %}
+
+            <a href="/video/" class="btn btn-outline-danger mt-4">
+                <i class="bi bi-arrow-left me-1"></i>Kthehu te Videos
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
