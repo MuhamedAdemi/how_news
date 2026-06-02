@@ -1,39 +1,36 @@
-# Django project
+# Environment & secrets — never inside the image
+.env
+*.env
+
+# Django generated
 /media/
 /static/
 *.sqlite3
 
-# Python and others
+# Python
 __pycache__
 *.pyc
-.DS_Store
-*.swp
-/venv/
-/tmp/
-/.vagrant/
-/Vagrantfile.local
-node_modules/
-/npm-debug.log
-/.idea/
-.vscode
-coverage
+*.pyo
+*.pyd
 .python-version
 
-# Distribution / packaging
-.Python
-env/
+# Virtual environment
+/venv/
+/env/
+
+# Dev tools
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+coverage/
+
+# Git
+.git/
+.gitignore
+
+# Distribution
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg

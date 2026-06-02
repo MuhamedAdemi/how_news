@@ -1,0 +1,31 @@
+services:
+
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: how_news
+      POSTGRES_USER: how_news
+      POSTGRES_PASSWORD: how_news_pass
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U how_news"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file: .env
+    volumes:
+      - media:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  media:
