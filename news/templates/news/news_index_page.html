@@ -38,6 +38,9 @@
                 <div class="card-footer d-flex justify-content-between align-items-center">
                     <small class="text-muted">
                         <i class="bi bi-calendar3 me-1"></i>{{ article.first_published_at|date:"d M Y" }}
+                        {% if article.source_name %}
+                            &middot; <i class="bi bi-rss me-1"></i>{{ article.source_name }}
+                        {% endif %}
                     </small>
                     <a href="{{ article.url }}" class="btn btn-sm btn-outline-primary">Lexo</a>
                 </div>

@@ -21,8 +21,18 @@
 
             <h1 class="fw-bold mb-3">{{ page.title }}</h1>
 
-            <div class="d-flex align-items-center text-muted mb-4 gap-3">
+            <div class="d-flex align-items-center text-muted mb-4 gap-3 flex-wrap">
                 <span><i class="bi bi-calendar3 me-1"></i>{{ page.first_published_at|date:"d M Y" }}</span>
+                {% if page.source_name %}
+                    <span>
+                        <i class="bi bi-rss me-1"></i>
+                        {% if page.source_url %}
+                            <a href="{{ page.source_url }}" target="_blank" rel="noopener" class="text-muted">{{ page.source_name }}</a>
+                        {% else %}
+                            {{ page.source_name }}
+                        {% endif %}
+                    </span>
+                {% endif %}
                 {% if page.tags.all %}
                     <span>
                         <i class="bi bi-tags me-1"></i>
