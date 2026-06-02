@@ -287,7 +287,7 @@ Pergjigju VETEM me JSON, asnje tekst tjeter."""
                 max_tokens=600,
                 messages=[{"role": "user", "content": prompt}],
             )
-            raw = msg.choices[0].message.content.strip()
+            raw = self._clean_json(msg.choices[0].message.content.strip())
             match = re.search(r"\{[\s\S]*\}", raw)
             if not match:
                 return None
@@ -335,7 +335,7 @@ Pergjigju VETEM me JSON:
                 max_tokens=700,
                 messages=[{"role": "user", "content": prompt}],
             )
-            raw = msg.choices[0].message.content.strip()
+            raw = self._clean_json(msg.choices[0].message.content.strip())
             match = re.search(r"\{[\s\S]*\}", raw)
             if not match:
                 return None
@@ -377,6 +377,15 @@ Pergjigju VETEM me JSON:
             return Groq(api_key=key) if key else None
         except ImportError:
             return None
+
+    def _clean_json(self, raw: str) -> str:
+        """Pastron output-in e AI para json.loads — fix True/False/None dhe code fences."""
+        raw = re.sub(r"```(?:json)?", "", raw).strip("`").strip()
+        raw = re.sub(r"\bTrue\b", "true", raw)
+        raw = re.sub(r"\bFalse\b", "false", raw)
+        raw = re.sub(r"\bNone\b", "null", raw)
+        raw = re.sub(r",\s*([}\]])", r"\1", raw)  # trailing commas
+        return raw
 
     def _unique_slug(self, base_slug, parent):
         slug = base_slug

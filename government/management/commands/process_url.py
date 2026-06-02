@@ -128,6 +128,11 @@ Pergjigju VETEM me JSON:
                 messages=[{"role": "user", "content": prompt}],
             )
             raw = msg.choices[0].message.content.strip()
+            raw = re.sub(r"```(?:json)?", "", raw).strip("`").strip()
+            raw = re.sub(r"\bTrue\b", "true", raw)
+            raw = re.sub(r"\bFalse\b", "false", raw)
+            raw = re.sub(r"\bNone\b", "null", raw)
+            raw = re.sub(r",\s*([}\]])", r"\1", raw)
             match = re.search(r"\{[\s\S]*\}", raw)
             if not match:
                 raise ValueError("AI nuk ktheu JSON te vlefshme")
