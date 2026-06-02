@@ -1,96 +1,192 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags %}
 
-{% block title %}{% if search_query %}Rezultate për "{{ search_query }}"{% else %}Kërko{% endif %}{% endblock %}
+{% block title %}{% if search_query %}Rezultate per "{{ search_query }}"{% else %}Kerko{% endif %}{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
+<div class="container py-4">
+<div class="row justify-content-center">
+<div class="col-lg-8">
 
-            <h1 class="fw-bold mb-4">
-                <i class="bi bi-search me-2 text-primary"></i>Kërko
-            </h1>
+    <h1 class="fw-bold mb-4"><i class="bi bi-search me-2 text-primary"></i>Kerko</h1>
 
-            <!-- Forma e kërkimit -->
-            <form action="{% url 'search' %}" method="get" class="mb-5">
-                <div class="input-group input-group-lg shadow-sm">
-                    <input type="text" name="query" class="form-control border-end-0"
-                        value="{% if search_query %}{{ search_query }}{% endif %}"
-                        placeholder="Kërko lajme, tendere, video..."
-                        autofocus>
-                    <button type="submit" class="btn btn-primary px-4">
-                        <i class="bi bi-search me-1"></i>Kërko
-                    </button>
-                </div>
-            </form>
-
-            <!-- Rezultatet -->
-            {% if search_query %}
-                {% if search_results %}
-                    <p class="text-muted mb-4">
-                        U gjetën <strong>{{ search_results.paginator.count }}</strong> rezultate për
-                        <em>"{{ search_query }}"</em>
-                    </p>
-
-                    <div class="list-group shadow-sm">
-                        {% for result in search_results %}
-                        <a href="{% pageurl result %}" class="list-group-item list-group-item-action py-3">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h6 class="mb-1 fw-bold">{{ result.title }}</h6>
-                                    {% if result.search_description %}
-                                        <p class="mb-0 text-muted small">{{ result.search_description }}</p>
-                                    {% endif %}
-                                </div>
-                                <i class="bi bi-arrow-right text-muted ms-3 flex-shrink-0"></i>
-                            </div>
-                        </a>
-                        {% endfor %}
-                    </div>
-
-                    <!-- Pagination -->
-                    {% if search_results.has_other_pages %}
-                    <nav class="mt-4 d-flex justify-content-center">
-                        <ul class="pagination pagination-sm gap-1">
-                            {% if search_results.has_previous %}
-                            <li class="page-item">
-                                <a class="page-link rounded" href="?query={{ search_query|urlencode }}&page={{ search_results.previous_page_number }}">«</a>
-                            </li>
-                            {% endif %}
-                            {% for num in search_results.paginator.page_range %}
-                                {% if num == search_results.number %}
-                                <li class="page-item active"><span class="page-link rounded">{{ num }}</span></li>
-                                {% elif num >= search_results.number|add:"-2" and num <= search_results.number|add:"2" %}
-                                <li class="page-item">
-                                    <a class="page-link rounded" href="?query={{ search_query|urlencode }}&page={{ num }}">{{ num }}</a>
-                                </li>
-                                {% endif %}
-                            {% endfor %}
-                            {% if search_results.has_next %}
-                            <li class="page-item">
-                                <a class="page-link rounded" href="?query={{ search_query|urlencode }}&page={{ search_results.next_page_number }}">»</a>
-                            </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
-                    {% endif %}
-
-                {% else %}
-                    <div class="alert alert-warning">
-                        <i class="bi bi-emoji-frown me-2"></i>
-                        Asnjë rezultat nuk u gjet për <strong>"{{ search_query }}"</strong>.
-                        Provo me fjalë të tjera.
-                    </div>
-                {% endif %}
-            {% else %}
-                <div class="text-center text-muted py-5">
-                    <i class="bi bi-search display-4 d-block mb-3"></i>
-                    <p>Shkruaj një fjalë kyçe dhe shtyp <em>Kërko</em>.</p>
-                </div>
-            {% endif %}
-
+    <!-- Forma e kerkimit -->
+    <form action="{% url 'search' %}" method="get" class="mb-4">
+        {% if search_type %}<input type="hidden" name="type" value="{{ search_type }}">{% endif %}
+        {% if current_language %}<input type="hidden" name="gjuha" value="{{ current_language }}">{% endif %}
+        <div class="input-group input-group-lg shadow-sm">
+            <input type="text" name="query" class="form-control border-end-0"
+                value="{{ search_query }}"
+                placeholder="Kerko lajme, tendere, video..."
+                autofocus>
+            <button type="submit" class="btn btn-primary px-4">
+                <i class="bi bi-search me-1"></i>Kerko
+            </button>
         </div>
+    </form>
+
+    {% if search_query %}
+
+    <!-- Filtrat sipas llojit -->
+    <div class="mb-3 d-flex flex-wrap gap-2">
+        <a href="?query={{ search_query|urlencode }}" class="btn btn-sm {% if not search_type %}btn-dark{% else %}btn-outline-secondary{% endif %}">
+            <i class="bi bi-grid me-1"></i>Te gjitha
+            {% if total_count %}<span class="badge bg-secondary ms-1">{{ total_count }}</span>{% endif %}
+        </a>
+        <a href="?query={{ search_query|urlencode }}&type=news{% if current_language %}&gjuha={{ current_language }}{% endif %}"
+           class="btn btn-sm {% if search_type == 'news' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            <i class="bi bi-newspaper me-1"></i>Lajme
+            {% if counts.news %}<span class="badge bg-primary ms-1">{{ counts.news }}</span>{% endif %}
+        </a>
+        <a href="?query={{ search_query|urlencode }}&type=government"
+           class="btn btn-sm {% if search_type == 'government' %}btn-success{% else %}btn-outline-success{% endif %}">
+            <i class="bi bi-building me-1"></i>Qeveria
+            {% if counts.government %}<span class="badge bg-success ms-1">{{ counts.government }}</span>{% endif %}
+        </a>
+        <a href="?query={{ search_query|urlencode }}&type=video"
+           class="btn btn-sm {% if search_type == 'video' %}btn-danger{% else %}btn-outline-danger{% endif %}">
+            <i class="bi bi-play-circle me-1"></i>Video
+            {% if counts.video %}<span class="badge bg-danger ms-1">{{ counts.video }}</span>{% endif %}
+        </a>
     </div>
+
+    <!-- Filtri i gjuhes (vetem per lajme) -->
+    {% if not search_type or search_type == 'news' %}
+    <div class="mb-4 d-flex flex-wrap gap-2 align-items-center">
+        <span class="text-muted small"><i class="bi bi-translate me-1"></i>Gjuha:</span>
+        <a href="?query={{ search_query|urlencode }}{% if search_type %}&type={{ search_type }}{% endif %}"
+           class="btn btn-sm {% if not current_language %}btn-outline-primary active{% else %}btn-outline-secondary{% endif %}">
+            Te gjitha
+        </a>
+        {% for code, name in languages %}
+        <a href="?query={{ search_query|urlencode }}{% if search_type %}&type={{ search_type }}{% endif %}&gjuha={{ code }}"
+           class="btn btn-sm {% if current_language == code %}btn-outline-primary active{% else %}btn-outline-secondary{% endif %}">
+            {{ name }}
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Rezultatet -->
+    {% if search_results %}
+
+        <p class="text-muted small mb-3">
+            {% if search_type == 'news' %}Lajme:{% elif search_type == 'government' %}Qeveria:{% elif search_type == 'video' %}Video:{% else %}Gjithsej:{% endif %}
+            <strong>{{ search_results.paginator.count }}</strong> rezultate per <em>"{{ search_query }}"</em>
+        </p>
+
+        <div class="list-group shadow-sm mb-4">
+            {% for result in search_results %}
+
+            {% with app=result.content_type.app_label %}
+            <a href="{% pageurl result %}" class="list-group-item list-group-item-action py-3 px-4">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div class="flex-grow-1 min-width-0">
+
+                        <!-- Titulli + badge i llojit -->
+                        <div class="d-flex flex-wrap gap-1 mb-1 align-items-center">
+                            {% if app == 'news' %}
+                                <span class="badge bg-primary">
+                                    <i class="bi bi-newspaper me-1"></i>Lajm
+                                </span>
+                                {% if result.category %}
+                                    <span class="badge bg-light text-dark border">{{ result.category.name }}</span>
+                                {% endif %}
+                                {% if result.language != 'sq' %}
+                                    <span class="badge bg-secondary">{{ result.get_language_display }}</span>
+                                {% endif %}
+                            {% elif app == 'government' %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-building me-1"></i>Qeveria
+                                </span>
+                                <span class="badge bg-light text-dark border">{{ result.get_item_type_display }}</span>
+                                <span class="badge {% if result.status == 'active' %}bg-success{% elif result.status == 'upcoming' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                                    {{ result.get_status_display }}
+                                </span>
+                            {% elif app == 'videos' %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-play-circle me-1"></i>Video
+                                </span>
+                                <span class="badge bg-light text-dark border">{{ result.get_category_display }}</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Titulli -->
+                        <h6 class="mb-1 fw-bold text-dark">{{ result.title }}</h6>
+
+                        <!-- Excerpt/pershkrim -->
+                        {% if app == 'news' and result.intro %}
+                            <p class="mb-1 text-muted small">{{ result.intro|truncatewords:25 }}</p>
+                        {% elif app == 'government' %}
+                            <p class="mb-1 text-muted small">{{ result.simple_explanation|striptags|truncatewords:20 }}</p>
+                        {% elif app == 'videos' and result.description %}
+                            <p class="mb-1 text-muted small">{{ result.description|striptags|truncatewords:20 }}</p>
+                        {% endif %}
+
+                        <!-- Metadata -->
+                        <div class="d-flex flex-wrap gap-3 mt-1">
+                            <small class="text-muted">
+                                <i class="bi bi-calendar3 me-1"></i>{{ result.first_published_at|date:"d M Y" }}
+                            </small>
+                            {% if app == 'news' and result.source_name %}
+                                <small class="text-muted">
+                                    <i class="bi bi-rss me-1"></i>{{ result.source_name }}
+                                </small>
+                            {% elif app == 'government' and result.deadline %}
+                                <small class="{% if result.status == 'expired' %}text-danger{% else %}text-warning{% endif %}">
+                                    <i class="bi bi-clock me-1"></i>Afati: {{ result.deadline|date:"d M Y" }}
+                                </small>
+                                {% if result.budget %}
+                                <small class="text-success">
+                                    <i class="bi bi-cash me-1"></i>{{ result.budget }}
+                                </small>
+                                {% endif %}
+                            {% elif app == 'videos' and result.presenter %}
+                                <small class="text-muted">
+                                    <i class="bi bi-person me-1"></i>{{ result.presenter }}
+                                </small>
+                                {% if result.duration_minutes %}
+                                <small class="text-muted">
+                                    <i class="bi bi-clock me-1"></i>{{ result.duration_minutes }} min
+                                </small>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+
+                    </div>
+                    <i class="bi bi-arrow-right text-muted flex-shrink-0 mt-1"></i>
+                </div>
+            </a>
+            {% endwith %}
+
+            {% endfor %}
+        </div>
+
+        <!-- Paginimi -->
+        {% include "includes/pagination.html" with page_obj=search_results query_string=filter_params %}
+
+    {% else %}
+        <div class="alert alert-warning">
+            <i class="bi bi-emoji-frown me-2"></i>
+            Asnje rezultat per <strong>"{{ search_query }}"</strong>
+            {% if search_type or current_language %}— provo pa filtra.{% else %}— provo me fjale te tjera.{% endif %}
+        </div>
+    {% endif %}
+
+    {% else %}
+        <!-- Gjendje fillestare - pa query -->
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-search display-3 d-block mb-4 text-primary opacity-25"></i>
+            <h5 class="fw-normal">Shkruaj fjalen kyqe dhe shtyp <em>Kerko</em></h5>
+            <p class="small mt-3">
+                Kerkon ne: <span class="badge bg-primary">Lajme</span>
+                <span class="badge bg-success">Qeveria</span>
+                <span class="badge bg-danger">Video</span>
+            </p>
+        </div>
+    {% endif %}
+
+</div>
+</div>
 </div>
 {% endblock %}
