@@ -48,6 +48,9 @@ WAGTAILADMIN_BASE_URL = env("WAGTAILADMIN_BASE_URL", default="http://localhost:8
 # Reverse proxy (nginx) dërgon HTTPS te Gunicorn si HTTP
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
 try:
     from .local import *
 except ImportError:

@@ -122,6 +122,7 @@ class Command(BaseCommand):
                 intro=intro,
                 source_url=url,
                 source_name=source.name,
+                language=source.language,
                 body=[],  # Trupi bosh — vetëm intro nga RSS
             )
 

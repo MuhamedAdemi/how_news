@@ -1,6 +1,6 @@
 {% comment %}
 Usage: {% include "includes/pagination.html" with page_obj=articles %}
-The 'page_obj' variable must be a Django Page object from Paginator.
+Optional: pass query_string=filter_params to preserve active filters in links.
 URL query param used: 'faqe'
 {% endcomment %}
 {% if page_obj.has_other_pages %}
@@ -8,7 +8,7 @@ URL query param used: 'faqe'
     <ul class="pagination pagination-sm gap-1">
         {% if page_obj.has_previous %}
         <li class="page-item">
-            <a class="page-link rounded" href="?faqe={{ page_obj.previous_page_number }}" aria-label="E mëparshme">
+            <a class="page-link rounded" href="?{% if query_string %}{{ query_string }}&{% endif %}faqe={{ page_obj.previous_page_number }}" aria-label="E meparshme">
                 &laquo;
             </a>
         </li>
@@ -25,18 +25,18 @@ URL query param used: 'faqe'
             </li>
             {% elif num >= page_obj.number|add:"-3" and num <= page_obj.number|add:"3" %}
             <li class="page-item">
-                <a class="page-link rounded" href="?faqe={{ num }}">{{ num }}</a>
+                <a class="page-link rounded" href="?{% if query_string %}{{ query_string }}&{% endif %}faqe={{ num }}">{{ num }}</a>
             </li>
             {% elif num == 1 or num == page_obj.paginator.num_pages %}
             <li class="page-item">
-                <a class="page-link rounded" href="?faqe={{ num }}">{{ num }}</a>
+                <a class="page-link rounded" href="?{% if query_string %}{{ query_string }}&{% endif %}faqe={{ num }}">{{ num }}</a>
             </li>
             {% endif %}
         {% endfor %}
 
         {% if page_obj.has_next %}
         <li class="page-item">
-            <a class="page-link rounded" href="?faqe={{ page_obj.next_page_number }}" aria-label="Tjetri">
+            <a class="page-link rounded" href="?{% if query_string %}{{ query_string }}&{% endif %}faqe={{ page_obj.next_page_number }}" aria-label="Tjetri">
                 &raquo;
             </a>
         </li>

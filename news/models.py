@@ -60,9 +60,14 @@ class NewsTag(TaggedItemBase):
     )
 
 
+@register_snippet
 class NewsCategory(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, verbose_name="Emri")
     slug = models.SlugField(unique=True, blank=True)
+
+    panels = [
+        FieldPanel("name"),
+    ]
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -73,7 +78,9 @@ class NewsCategory(models.Model):
         return self.name
 
     class Meta:
+        verbose_name = "News Category"
         verbose_name_plural = "News Categories"
+        ordering = ["name"]
 
 
 class NewsIndexPage(Page):
@@ -87,17 +94,34 @@ class NewsIndexPage(Page):
 
     def get_context(self, request):
         context = super().get_context(request)
+        category_slug = request.GET.get("kategoria", "")
+        language = request.GET.get("gjuha", "")
+
         articles = (
             NewsArticlePage.objects.child_of(self)
             .live()
             .order_by("-first_published_at")
         )
+        if category_slug:
+            articles = articles.filter(category__slug=category_slug)
+        if language:
+            articles = articles.filter(language=language)
+
         paginator = Paginator(articles, 12)
         page_num = request.GET.get("faqe", 1)
         try:
             context["articles"] = paginator.page(page_num)
         except (PageNotAnInteger, EmptyPage):
             context["articles"] = paginator.page(1)
+
+        context["categories"] = NewsCategory.objects.all()
+        context["current_category"] = category_slug
+        context["languages"] = FeedLanguage.choices
+        context["current_language"] = language
+
+        params = request.GET.copy()
+        params.pop("faqe", None)
+        context["filter_params"] = params.urlencode()
         return context
 
     class Meta:
@@ -116,6 +140,13 @@ class NewsArticlePage(Page):
     )
 
     intro = models.TextField(max_length=500, blank=True)
+
+    language = models.CharField(
+        max_length=2,
+        choices=FeedLanguage.choices,
+        default=FeedLanguage.ALBANIAN,
+        verbose_name="Gjuha",
+    )
 
     # URL origjinale e lajmit — përdoret për të shmangur duplikatet
     source_url = models.URLField(max_length=500, blank=True, db_index=True)
@@ -152,12 +183,14 @@ class NewsArticlePage(Page):
     search_fields = Page.search_fields + [
         index.SearchField("intro"),
         index.SearchField("body"),
+        index.FilterField("language"),
     ]
 
     content_panels = Page.content_panels + [
         MultiFieldPanel([
             FieldPanel("cover_image"),
             FieldPanel("intro"),
+            FieldPanel("language"),
             FieldPanel("category"),
             FieldPanel("tags"),
         ], heading="Article Info"),

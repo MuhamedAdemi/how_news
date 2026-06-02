@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="container py-4">
-    <div class="row mb-4">
+    <div class="row mb-3">
         <div class="col">
             <h1 class="fw-bold"><i class="bi bi-newspaper me-2 text-primary"></i>Lajme Ditore</h1>
             {% if page.intro %}
@@ -13,6 +13,38 @@
             {% endif %}
         </div>
     </div>
+
+    <!-- Filtrat: Gjuha -->
+    <div class="mb-2 d-flex flex-wrap gap-2 align-items-center">
+        <span class="text-muted small me-1"><i class="bi bi-translate me-1"></i>Gjuha:</span>
+        <a href="/lajme/{% if current_category %}?kategoria={{ current_category }}{% endif %}"
+           class="btn btn-sm {% if not current_language %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            Te gjitha
+        </a>
+        {% for code, name in languages %}
+        <a href="?gjuha={{ code }}{% if current_category %}&amp;kategoria={{ current_category }}{% endif %}"
+           class="btn btn-sm {% if current_language == code %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            {{ name }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Filtrat: Kategoria -->
+    {% if categories %}
+    <div class="mb-4 d-flex flex-wrap gap-2 align-items-center">
+        <span class="text-muted small me-1"><i class="bi bi-tag me-1"></i>Kategoria:</span>
+        <a href="/lajme/{% if current_language %}?gjuha={{ current_language }}{% endif %}"
+           class="btn btn-sm {% if not current_category %}btn-info{% else %}btn-outline-secondary{% endif %}">
+            Te gjitha
+        </a>
+        {% for cat in categories %}
+        <a href="?kategoria={{ cat.slug }}{% if current_language %}&amp;gjuha={{ current_language }}{% endif %}"
+           class="btn btn-sm {% if current_category == cat.slug %}btn-info{% else %}btn-outline-secondary{% endif %}">
+            {{ cat.name }}
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
 
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for article in articles %}
@@ -27,9 +59,14 @@
                     </div>
                 {% endif %}
                 <div class="card-body">
-                    {% if article.category %}
-                        <span class="badge bg-primary mb-2">{{ article.category.name }}</span>
-                    {% endif %}
+                    <div class="d-flex gap-1 mb-2">
+                        {% if article.category %}
+                            <span class="badge bg-primary">{{ article.category.name }}</span>
+                        {% endif %}
+                        {% if article.language != 'sq' %}
+                            <span class="badge bg-secondary">{{ article.get_language_display }}</span>
+                        {% endif %}
+                    </div>
                     <h5 class="card-title">{{ article.title }}</h5>
                     {% if article.intro %}
                         <p class="card-text text-muted small">{{ article.intro|truncatewords:20 }}</p>
@@ -49,12 +86,12 @@
         {% empty %}
         <div class="col-12">
             <div class="alert alert-info">
-                <i class="bi bi-info-circle me-2"></i>Nuk ka lajme ende. Shto artikullin e parë nga paneli admin.
+                <i class="bi bi-info-circle me-2"></i>Nuk ka lajme per kete filtrim.
             </div>
         </div>
         {% endfor %}
     </div>
 
-    {% include "includes/pagination.html" with page_obj=articles %}
+    {% include "includes/pagination.html" with page_obj=articles query_string=filter_params %}
 </div>
 {% endblock %}

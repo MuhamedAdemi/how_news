@@ -17,7 +17,7 @@ from wagtail.models import Page, Site
 
 from government.models import GovIndexPage
 from home.models import HomePage
-from news.models import FeedSource, FeedLanguage, NewsIndexPage
+from news.models import FeedSource, FeedLanguage, NewsCategory, NewsIndexPage
 from videos.models import VideoIndexPage
 
 DEFAULT_FEEDS = [
@@ -81,6 +81,8 @@ class Command(BaseCommand):
 
         if not options["skip_feeds"]:
             self._add_feed_sources()
+
+        self._add_news_categories()
 
         self.stdout.write(self.style.SUCCESS(
             "\n[DONE] Setup kompletuar. Shko te http://localhost:8000/admin/ dhe logohu.\n"
@@ -217,8 +219,25 @@ class Command(BaseCommand):
 
         if created:
             self.stdout.write(self.style.SUCCESS(
-                f"\n  {created} burime të reja u shtuan. Ekzekuto:"
+                f"\n  {created} burime te reja u shtuan. Ekzekuto:"
             ))
             self.stdout.write("    python manage.py fetch_feeds")
         else:
-            self.stdout.write("  Të gjitha burimet ekzistojnë tashmë.")
+            self.stdout.write("  Te gjitha burimet ekzistojne tashme.")
+
+    def _add_news_categories(self):
+        default_categories = [
+            "Politike", "Ekonomi", "Shoqeri", "Sport",
+            "Teknologji", "Bote", "Kulture", "Shendetesi",
+        ]
+        self.stdout.write("\n  Kategoritë e lajmeve:")
+        created = 0
+        for name in default_categories:
+            _, new = NewsCategory.objects.get_or_create(name=name)
+            if new:
+                self.stdout.write(self.style.SUCCESS(f"    [+]{name}"))
+                created += 1
+            else:
+                self.stdout.write(f"    [OK]{name}")
+        if not created:
+            self.stdout.write("  Te gjitha kategorite ekzistojne tashme.")
