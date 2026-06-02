@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "news",
     "government",
     "videos",
+    "agents",
     "rest_framework",
     "django_filters",
     "wagtail.contrib.forms",
