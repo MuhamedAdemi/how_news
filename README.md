@@ -97,6 +97,10 @@ python manage.py fetch_gov --ai --limit 5
 # Proceso URL specifike zyrtare me AI
 python manage.py process_url https://vlada.mk/mk-MK/...
 
+# Proceso liste URL-sh te kuratura (vlada.mk, finance.gov.mk, bashkite...)
+python manage.py seed_gov_urls         # proceson URL-t e reja
+python manage.py seed_gov_urls --dry   # shfaq statusin pa procesuar
+
 # Shëno si të skaduara GovItemPage-t me afat të kaluar
 python manage.py expire_gov_items  # (në zhvillim)
 ```
