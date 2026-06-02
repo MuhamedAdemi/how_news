@@ -1,3 +1,4 @@
+anthropic>=0.40.0
 anyascii==0.3.3
 asgiref==3.11.1
 beautifulsoup4==4.14.3

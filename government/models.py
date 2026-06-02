@@ -6,6 +6,7 @@ from wagtail.fields import StreamField, RichTextField
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.blocks import CharBlock, RichTextBlock, StructBlock, URLBlock
 from wagtail.search import index
+from wagtail.snippets.models import register_snippet
 
 
 class GovItemType(models.TextChoices):
@@ -20,6 +21,39 @@ class GovItemStatus(models.TextChoices):
     ACTIVE = "active", "Aktiv"
     UPCOMING = "upcoming", "Se shpejti"
     EXPIRED = "expired", "Ka skaduar"
+
+
+@register_snippet
+class GovSource(models.Model):
+    """Burim qeveritar — RSS feed ose faqe per skanim."""
+
+    name = models.CharField(max_length=100, verbose_name="Emri i burimit")
+    url = models.URLField(unique=True, verbose_name="URL (RSS ose faqe)")
+    institution = models.CharField(max_length=200, blank=True, verbose_name="Institucioni")
+    default_item_type = models.CharField(
+        max_length=20,
+        choices=GovItemType.choices,
+        default=GovItemType.ANNOUNCEMENT,
+        verbose_name="Lloji i parazgjedhur",
+    )
+    is_active = models.BooleanField(default=True, verbose_name="Aktiv")
+    last_fetched = models.DateTimeField(null=True, blank=True)
+
+    panels = [
+        FieldPanel("name"),
+        FieldPanel("url"),
+        FieldPanel("institution"),
+        FieldPanel("default_item_type"),
+        FieldPanel("is_active"),
+    ]
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Gov Source"
+        verbose_name_plural = "Gov Sources"
+        ordering = ["name"]
 
 
 class GovIndexPage(Page):
@@ -92,12 +126,21 @@ class GovItemPage(Page):
     )
 
     original_url = models.URLField(
+        max_length=500,
         blank=True,
         verbose_name="Linku origjinal zyrtar",
     )
 
+    source_url = models.URLField(
+        max_length=500,
+        blank=True,
+        db_index=True,
+        verbose_name="URL burimi (per deduplikim)",
+    )
+
     # Shpjegimi i thjeshtë - kjo është vlera kryesore e platformës
     simple_explanation = RichTextField(
+        blank=True,
         verbose_name="Shpjegimi i thjeshtë për qytetarët",
         help_text="Shpjego në gjuhë të thjeshtë çfarë është, kush mund të aplikojë, dhe si.",
     )

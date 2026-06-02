@@ -15,7 +15,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from wagtail.models import Page, Site
 
-from government.models import GovIndexPage
+from government.models import GovIndexPage, GovItemType, GovSource
 from home.models import HomePage
 from news.models import FeedSource, FeedLanguage, NewsCategory, NewsIndexPage
 from videos.models import VideoIndexPage
@@ -83,6 +83,7 @@ class Command(BaseCommand):
             self._add_feed_sources()
 
         self._add_news_categories()
+        self._add_gov_sources()
 
         self.stdout.write(self.style.SUCCESS(
             "\n[DONE] Setup kompletuar. Shko te http://localhost:8000/admin/ dhe logohu.\n"
@@ -241,3 +242,47 @@ class Command(BaseCommand):
                 self.stdout.write(f"    [OK]{name}")
         if not created:
             self.stdout.write("  Te gjitha kategorite ekzistojne tashme.")
+
+    def _add_gov_sources(self):
+        gov_sources = [
+            {
+                "name": "Portalb - Maqedoni (RSS)",
+                "url": "https://www.portalb.mk/category/maqedoni/feed/",
+                "institution": "Portali Shqiptar i Maqedonise",
+                "default_item_type": GovItemType.ANNOUNCEMENT,
+            },
+            {
+                "name": "Portalb - Ekonomi (RSS)",
+                "url": "https://www.portalb.mk/category/ekonomi/feed/",
+                "institution": "Portali Shqiptar i Maqedonise",
+                "default_item_type": GovItemType.ANNOUNCEMENT,
+            },
+            {
+                "name": "Vlada MK - Njoftimet Zyrtare (WEB)",
+                "url": "https://vlada.mk/mk-MK/odnosi-so-javnost",
+                "institution": "Qeveria e Republikes se Maqedonise se Veriut",
+                "default_item_type": GovItemType.ANNOUNCEMENT,
+            },
+        ]
+        self.stdout.write("\n  Burimet Qeveritare (RMV):")
+        created = 0
+        for data in gov_sources:
+            _, new = GovSource.objects.get_or_create(
+                url=data["url"],
+                defaults={
+                    "name": data["name"],
+                    "institution": data["institution"],
+                    "default_item_type": data["default_item_type"],
+                    "is_active": True,
+                },
+            )
+            if new:
+                self.stdout.write(self.style.SUCCESS(f"    [+]{data['name']}"))
+                created += 1
+            else:
+                self.stdout.write(f"    [OK]{data['name']}")
+        if created:
+            self.stdout.write(self.style.SUCCESS(
+                f"\n  {created} burime te reja. Ekzekuto:"
+            ))
+            self.stdout.write("    python manage.py fetch_gov --ai")
