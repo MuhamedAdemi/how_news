@@ -7,7 +7,7 @@ Merr njoftimet qeveritare nga burime aktive dhe krijon GovItemPage.
 
 Perdorim:
     python manage.py fetch_gov            # pa AI, vetem RSS basic
-    python manage.py fetch_gov --ai       # me Claude AI (kerkuese ANTHROPIC_API_KEY)
+    python manage.py fetch_gov --ai       # me LLaMA AI via Groq (kerkon GROQ_API_KEY)
     python manage.py fetch_gov --limit 5  # max 5 artikuj per burim
 """
 import json
@@ -33,7 +33,7 @@ from government.models import (
 
 warnings.filterwarnings("ignore")  # supreson SSL warnings per gov sites
 
-AI_MODEL = "claude-haiku-4-5-20251001"
+GROQ_MODEL = "llama-3.1-8b-instant"
 
 GOV_KEYWORDS = [
     "konkurs", "tender", "grant", "fond", "buxhet", "financim",
@@ -282,12 +282,12 @@ Nese PO -> shkruaj:
 Pergjigju VETEM me JSON, asnje tekst tjeter."""
 
         try:
-            msg = client.messages.create(
-                model=AI_MODEL,
+            msg = client.chat.completions.create(
+                model=GROQ_MODEL,
                 max_tokens=600,
                 messages=[{"role": "user", "content": prompt}],
             )
-            raw = msg.content[0].text.strip()
+            raw = msg.choices[0].message.content.strip()
             match = re.search(r"\{[\s\S]*\}", raw)
             if not match:
                 return None
@@ -330,12 +330,12 @@ Pergjigju VETEM me JSON:
 }}"""
 
         try:
-            msg = client.messages.create(
-                model=AI_MODEL,
+            msg = client.chat.completions.create(
+                model=GROQ_MODEL,
                 max_tokens=700,
                 messages=[{"role": "user", "content": prompt}],
             )
-            raw = msg.content[0].text.strip()
+            raw = msg.choices[0].message.content.strip()
             match = re.search(r"\{[\s\S]*\}", raw)
             if not match:
                 return None
@@ -371,10 +371,10 @@ Pergjigju VETEM me JSON:
 
     def _init_ai(self):
         try:
-            import anthropic
             import os
-            key = os.environ.get("ANTHROPIC_API_KEY", "")
-            return anthropic.Anthropic(api_key=key) if key else None
+            from groq import Groq
+            key = os.environ.get("GROQ_API_KEY", "")
+            return Groq(api_key=key) if key else None
         except ImportError:
             return None
 

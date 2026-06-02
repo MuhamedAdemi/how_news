@@ -44,11 +44,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         url = options["url"]
-        api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+        api_key = os.environ.get("GROQ_API_KEY", "")
 
         if not api_key:
             self.stderr.write(self.style.ERROR(
-                "ANTHROPIC_API_KEY mungon ne .env"
+                "GROQ_API_KEY mungon ne .env (falas: console.groq.com)"
             ))
             return
 
@@ -90,10 +90,10 @@ class Command(BaseCommand):
         self.stdout.write(f"    Titulli: {raw_title[:80]}")
         self.stdout.write("    [AI] Duke procesuar...")
 
-        # Claude API
+        # Groq API (LLaMA 3.3 70B — falas)
         try:
-            import anthropic
-            client = anthropic.Anthropic(api_key=api_key)
+            from groq import Groq
+            client = Groq(api_key=api_key)
 
             prompt = f"""Ti je asistent i "HoW News - Qeveria e Thjesht" per shqiptaret e Maqedonise se Veriut.
 
@@ -122,12 +122,12 @@ Pergjigju VETEM me JSON:
   "deadline_text": ""
 }}"""
 
-            msg = client.messages.create(
-                model="claude-haiku-4-5-20251001",
+            msg = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
                 max_tokens=900,
                 messages=[{"role": "user", "content": prompt}],
             )
-            raw = msg.content[0].text.strip()
+            raw = msg.choices[0].message.content.strip()
             match = re.search(r"\{[\s\S]*\}", raw)
             if not match:
                 raise ValueError("AI nuk ktheu JSON te vlefshme")

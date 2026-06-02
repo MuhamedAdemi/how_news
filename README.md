@@ -4,7 +4,7 @@
 
 [![Django](https://img.shields.io/badge/Django-5.2-green)](https://djangoproject.com)
 [![Wagtail](https://img.shields.io/badge/Wagtail-7.4-blue)](https://wagtail.org)
-[![Claude AI](https://img.shields.io/badge/Claude_AI-Haiku-orange)](https://anthropic.com)
+[![Groq AI](https://img.shields.io/badge/Groq_AI-LLaMA_3.3-orange)](https://groq.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 ---
@@ -37,7 +37,7 @@ Platforma i shërben qytetarët e Maqedonisë së Veriut  duke:
 ### Asistenti AI (Chatbot RAG)
 - Qytetari pyet lirshëm: *"Cilat grante janë të hapura për OJQ-të?"*
 - AI kërkon në bazën e të dhënave lokale (RAG) dhe përgjigjet në Shqip
-- Bazuar në Claude Haiku — kosto minimale (~$0.0005/query)
+- Bazuar në **Groq + LLaMA 3.3 70B** — kosto **ZERO** (tier falas, 14,400 kërkesa/ditë)
 
 ### REST API
 - Endpoint-e të plota për lajme, qeveri dhe video
@@ -50,8 +50,8 @@ Platforma i shërben qytetarët e Maqedonisë së Veriut  duke:
 | Komponenti | Teknologjia |
 |-----------|-------------|
 | Backend | Django 5.2 + Wagtail 7.4 CMS |
-| AI/NLP | Anthropic Claude API (Haiku) |
-| RAG | Wagtail Search + Claude context |
+| AI/NLP | Groq API — LLaMA 3.3 70B (FALAS) |
+| RAG | Wagtail Search + LLaMA context |
 | Frontend | Bootstrap 5.3 + Bootstrap Icons |
 | API | Django REST Framework |
 | RSS | feedparser |
@@ -109,7 +109,7 @@ python manage.py expire_gov_items  # (në zhvillim)
 SECRET_KEY=django-key-e-gjate
 ALLOWED_HOSTS=localhost,127.0.0.1
 DATABASE_URL=                        # bosh = SQLite
-ANTHROPIC_API_KEY=sk-ant-...         # për AI features
+GROQ_API_KEY=gsk_...                 # falas: console.groq.com
 CSRF_TRUSTED_ORIGINS=http://localhost:8000
 WAGTAILADMIN_BASE_URL=http://localhost:8000
 ```

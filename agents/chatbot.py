@@ -1,14 +1,17 @@
 """
 HoW News Chatbot — RAG mbi GovItemPage + NewsArticlePage.
 
-Perdor Wagtail search per retrieval dhe Claude Haiku per pergjigje.
-Kosto: ~$0.0005 per query (praktikisht falas per faze fillestare).
+Perdor Wagtail search per retrieval dhe Groq (LLaMA) per pergjigje.
+Kosto: ZERO — Groq ka tier falas me 14,400 kerkesa/dite.
+Regjistrohu ne: https://console.groq.com (falas, pa karte krediti)
 """
 import os
 import re
 
 from government.models import GovItemPage, GovItemStatus
 from news.models import NewsArticlePage
+
+CHATBOT_MODEL = "llama-3.3-70b-versatile"
 
 SYSTEM_PROMPT = """Ti je asistenti inteligjent i platformes "HoW News" — iniciative e House of Wisdom per qytetaret shqiptare te Republikes se Maqedonise se Veriut.
 
@@ -37,7 +40,6 @@ def build_context(query: str) -> str:
     parts = []
 
     for item in gov_results:
-        # Pastro HTML tags nga simple_explanation
         explanation = re.sub(r"<[^>]+>", " ", item.simple_explanation or "")
         explanation = " ".join(explanation.split())[:300]
         parts.append(
@@ -70,19 +72,19 @@ def chat(question: str, history: list | None = None) -> dict:
     Kryen nje kthim chatbot.
     Kthen: {'answer': str, 'sources': int, 'error': str|None}
     """
-    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    api_key = os.environ.get("GROQ_API_KEY", "")
     if not api_key:
         return {
-            "answer": "Chatbot-i nuk eshte konfiguruar ende. ANTHROPIC_API_KEY mungon.",
+            "answer": "Chatbot-i nuk eshte konfiguruar. Shto GROQ_API_KEY ne .env (falas: console.groq.com).",
             "sources": 0,
             "error": "no_api_key",
         }
 
     try:
-        import anthropic
+        from groq import Groq
     except ImportError:
         return {
-            "answer": "Libraria 'anthropic' nuk eshte instaluar.",
+            "answer": "Libraria 'groq' nuk eshte instaluar. Ekzekuto: pip install groq",
             "sources": 0,
             "error": "import_error",
         }
@@ -90,7 +92,9 @@ def chat(question: str, history: list | None = None) -> dict:
     context = build_context(question)
     source_count = context.count("[QEVERIA]") + context.count("[LAJM]")
 
-    messages = list(history or [])
+    # Groq (OpenAI-compatible): system message si elementi i pare
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    messages.extend(history or [])
     messages.append({
         "role": "user",
         "content": (
@@ -101,14 +105,14 @@ def chat(question: str, history: list | None = None) -> dict:
     })
 
     try:
-        client = anthropic.Anthropic(api_key=api_key)
-        response = client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=800,
-            system=SYSTEM_PROMPT,
+        client = Groq(api_key=api_key)
+        response = client.chat.completions.create(
+            model=CHATBOT_MODEL,
             messages=messages,
+            max_tokens=800,
+            temperature=0.3,
         )
-        answer = response.content[0].text
+        answer = response.choices[0].message.content
         return {"answer": answer, "sources": source_count, "error": None}
     except Exception as exc:
         return {
