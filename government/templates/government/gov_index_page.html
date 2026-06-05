@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags i18n %}
+{% load wagtailcore_tags i18n hv_tags %}
 
 {% block title %}{% get_current_language as cur_lang %}{% if cur_lang == 'en' %}Programmes{% elif cur_lang == 'mk' %}Програми{% else %}Programe{% endif %} — HoW Voices{% endblock %}
 
@@ -88,10 +88,10 @@
         <div class="hv-card-body">
           <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-1">
             <span class="hv-badge hv-badge-{{ item.item_type|default:'default' }}">
-              {{ item.get_item_type_display }}
+              {{ item.item_type|type_name:cur_lang }}
             </span>
             <span class="hv-badge {% if item.status == 'active' %}hv-badge-grant{% elif item.status == 'upcoming' %}hv-badge-rural{% else %}hv-badge-default{% endif %}">
-              {{ item.get_status_display }}
+              {{ item.status|status_name:cur_lang }}
             </span>
           </div>
 

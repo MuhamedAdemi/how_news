@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags i18n %}
+{% load wagtailcore_tags wagtailimages_tags i18n hv_tags %}
 
 {% block title %}{% get_current_language as cur_lang %}{% if cur_lang == 'en' %}News{% elif cur_lang == 'mk' %}Вести{% else %}Lajme{% endif %} — HoW Voices{% endblock %}
 
@@ -28,8 +28,8 @@
     <form method="get" class="d-flex flex-wrap gap-2 align-items-center">
 
       <!-- Language pills -->
-      <div class="d-flex align-items-center gap-1 me-2">
-        <i class="bi bi-translate" style="color:var(--hv-text-muted);"></i>
+      <div class="d-flex align-items-center gap-1 me-2 flex-wrap">
+        <i class="bi bi-translate" style="color:var(--hv-text-muted);font-size:.85rem;"></i>
         <a href="/lajme/{% if current_category %}?kategoria={{ current_category }}{% endif %}"
            class="domain-pill {% if not current_language %}domain-pill-all{% else %}domain-pill-outline{% endif %}" style="font-size:.78rem;padding:.3rem .8rem;">
           {% if cur_lang == 'en' %}All{% elif cur_lang == 'mk' %}Сите{% else %}Të gjitha{% endif %}
@@ -37,7 +37,7 @@
         {% for code, name in languages %}
         <a href="?gjuha={{ code }}{% if current_category %}&amp;kategoria={{ current_category }}{% endif %}"
            class="domain-pill domain-pill-outline {% if current_language == code %}active-pill{% endif %}" style="font-size:.78rem;padding:.3rem .8rem;">
-          {{ name }}
+          {{ code|lang_flag }} {{ code|lang_name:cur_lang }}
         </a>
         {% endfor %}
       </div>
@@ -45,15 +45,15 @@
       <!-- Category pills -->
       {% if categories %}
       <div class="d-flex align-items-center gap-1 flex-wrap">
-        <i class="bi bi-tag" style="color:var(--hv-text-muted);"></i>
+        <i class="bi bi-tag" style="color:var(--hv-text-muted);font-size:.85rem;"></i>
         <a href="/lajme/{% if current_language %}?gjuha={{ current_language }}{% endif %}"
            class="domain-pill {% if not current_category %}domain-pill-all{% else %}domain-pill-outline{% endif %}" style="font-size:.78rem;padding:.3rem .8rem;">
-          {% if cur_lang == 'en' %}All categories{% elif cur_lang == 'mk' %}Сите категории{% else %}Të gjitha{% endif %}
+          {% if cur_lang == 'en' %}All{% elif cur_lang == 'mk' %}Сите{% else %}Të gjitha{% endif %}
         </a>
         {% for cat in categories %}
         <a href="?kategoria={{ cat.slug }}{% if current_language %}&amp;gjuha={{ current_language }}{% endif %}"
            class="domain-pill domain-pill-outline {% if current_category == cat.slug %}active-pill{% endif %}" style="font-size:.78rem;padding:.3rem .8rem;">
-          {{ cat.name }}
+          {{ cat.slug|cat_name:cur_lang }}
         </a>
         {% endfor %}
       </div>
@@ -79,11 +79,9 @@
           <div class="hv-card-body">
             <div class="d-flex gap-1 mb-2 flex-wrap">
               {% if article.category %}
-                <span class="hv-badge hv-badge-default">{{ article.category.name }}</span>
+                <span class="hv-badge hv-badge-default">{{ article.category.slug|cat_name:cur_lang }}</span>
               {% endif %}
-              {% if article.language and article.language != 'sq' %}
-                <span class="hv-badge hv-badge-default">{{ article.get_language_display }}</span>
-              {% endif %}
+              <span class="hv-badge hv-badge-default">{{ article.language|lang_flag }} {{ article.language|lang_name:cur_lang }}</span>
             </div>
             <h6 class="fw-700 mb-1" style="color:var(--hv-text-primary);font-size:.9rem;line-height:1.4;">{{ article.title }}</h6>
             <p class="small mb-0" style="color:var(--hv-text-muted);">
