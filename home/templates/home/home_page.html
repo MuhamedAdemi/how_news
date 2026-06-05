@@ -1,147 +1,269 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags i18n %}
 
-{% block title %}HoW News — Informacion qytetar{% endblock %}
+{% block title %}HoW Voices — {% if LANGUAGE_CODE == 'en' %}Civic Platform for All Citizens{% elif LANGUAGE_CODE == 'mk' %}Граѓанска платформа за сите{% else %}Platformë Qytetare për të Gjithë{% endif %}{% endblock %}
 
 {% block content %}
+{% get_current_language as cur_lang %}
 
-<!-- Hero -->
-<div class="bg-dark text-white py-5">
-    <div class="container text-center">
-        <h1 class="display-5 fw-bold"><span class="text-warning">HoW</span> News</h1>
-        <p class="lead">Informacion qytetar, qeveria e thjeshtë dhe edukim nga House of Wisdom</p>
-        <div class="d-flex justify-content-center gap-2 mt-3">
-            <a href="/lajme/" class="btn btn-primary">
-                <i class="bi bi-newspaper me-1"></i>Lajme
-            </a>
-            <a href="/qeveria/" class="btn btn-success">
-                <i class="bi bi-building me-1"></i>Qeveria e Thjeshtë
-            </a>
-            <a href="/video/" class="btn btn-danger">
-                <i class="bi bi-play-circle me-1"></i>Video
-            </a>
-        </div>
+<!-- ── Hero ──────────────────────────────────────────────────── -->
+<section class="hv-hero text-center">
+  <div class="container">
+
+    <div class="hv-hero-badge">
+      <i class="bi bi-shield-check"></i>
+      {% if cur_lang == 'en' %}Open Civic Platform · North Macedonia
+      {% elif cur_lang == 'mk' %}Отворена граѓанска платформа · Македонија
+      {% else %}Platformë Qytetare e Hapur · Maqedonia e Veriut{% endif %}
     </div>
+
+    <h1>
+      {% if cur_lang == 'en' %}
+        Information for <em>every citizen</em>,<br>rights for <em>everyone</em>
+      {% elif cur_lang == 'mk' %}
+        Информации за <em>секој граѓанин</em>,<br>права за <em>сите</em>
+      {% else %}
+        Informacion për <em>çdo qytetar</em>,<br>të drejta për <em>të gjithë</em>
+      {% endif %}
+    </h1>
+
+    <p class="lead mx-auto">
+      {% if cur_lang == 'en' %}
+        House of Wisdom empowers vulnerable and marginalised communities —
+        regardless of nationality, gender, age or ability — to access
+        government services, grants and their rights.
+      {% elif cur_lang == 'mk' %}
+        House of Wisdom ги зајакнува ранливите и маргинализираните заедници —
+        без разлика на националноста, полот, возраста или способноста — да
+        пристапат до државни услуги, грантови и нивните права.
+      {% else %}
+        House of Wisdom fuqizon komunitetet e cënueshme dhe të margjinalizuara —
+        pa dallim kombësie, gjinie, moshe apo aftësie — për të aksesuar
+        shërbime qeveritare, grante dhe të drejtat e tyre.
+      {% endif %}
+    </p>
+
+    <!-- Stats -->
+    <div class="hv-hero-stats">
+      <div class="hv-stat">
+        <span class="number">75+</span>
+        <span class="label">{% if cur_lang == 'en' %}Programmes{% elif cur_lang == 'mk' %}Програми{% else %}Programe{% endif %}</span>
+      </div>
+      <div class="hv-stat">
+        <span class="number">9</span>
+        <span class="label">{% if cur_lang == 'en' %}Domains{% elif cur_lang == 'mk' %}Домени{% else %}Domene{% endif %}</span>
+      </div>
+      <div class="hv-stat">
+        <span class="number">AI</span>
+        <span class="label">{% if cur_lang == 'en' %}Free assistant{% elif cur_lang == 'mk' %}Бесплатен асистент{% else %}Asistent falas{% endif %}</span>
+      </div>
+      <div class="hv-stat">
+        <span class="number">0€</span>
+        <span class="label">{% if cur_lang == 'en' %}Cost to use{% elif cur_lang == 'mk' %}Трошок{% else %}Kosto{% endif %}</span>
+      </div>
+    </div>
+
+    <!-- CTAs -->
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+      <a href="/qeveria/" class="btn-hv-primary btn px-4 py-2">
+        <i class="bi bi-grid me-2"></i>
+        {% if cur_lang == 'en' %}Explore Programmes{% elif cur_lang == 'mk' %}Истражи програми{% else %}Shfleto Programet{% endif %}
+      </a>
+      <a href="/chat/" class="btn btn-outline-light px-4 py-2 fw-600">
+        <i class="bi bi-robot me-2"></i>
+        {% if cur_lang == 'en' %}Ask AI Assistant{% elif cur_lang == 'mk' %}Прашај АИ{% else %}Pyet Asistentin{% endif %}
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Domain filter bar ──────────────────────────────────────── -->
+<div class="bg-white border-bottom py-3 sticky-top" style="top:57px;z-index:100;">
+  <div class="container">
+    <div class="domain-filters">
+      <a href="/qeveria/" class="domain-pill domain-pill-all">
+        <i class="bi bi-grid-3x3-gap-fill"></i>
+        {% if cur_lang == 'en' %}All{% elif cur_lang == 'mk' %}Сите{% else %}Të gjitha{% endif %}
+      </a>
+      <a href="/qeveria/?domain=punesim" class="domain-pill domain-pill-outline" data-domain="punesim">
+        <i class="bi bi-briefcase"></i>
+        {% if cur_lang == 'en' %}Employment{% elif cur_lang == 'mk' %}Вработување{% else %}Punësim{% endif %}
+      </a>
+      <a href="/qeveria/?domain=social" class="domain-pill domain-pill-outline" data-domain="social">
+        <i class="bi bi-people"></i>
+        {% if cur_lang == 'en' %}Social & Family{% elif cur_lang == 'mk' %}Социјала{% else %}Social/Familje{% endif %}
+      </a>
+      <a href="/qeveria/?domain=biznes" class="domain-pill domain-pill-outline" data-domain="biznes">
+        <i class="bi bi-building-up"></i>
+        {% if cur_lang == 'en' %}Business{% elif cur_lang == 'mk' %}Бизнис{% else %}Biznes{% endif %}
+      </a>
+      <a href="/qeveria/?domain=rural" class="domain-pill domain-pill-outline" data-domain="rural">
+        <i class="bi bi-tree"></i>
+        Rural / IPARD
+      </a>
+      <a href="/qeveria/?domain=ambient" class="domain-pill domain-pill-outline" data-domain="ambient">
+        <i class="bi bi-wind"></i>
+        {% if cur_lang == 'en' %}Environment{% elif cur_lang == 'mk' %}Животна средина{% else %}Mjedis{% endif %}
+      </a>
+      <a href="/qeveria/?domain=arsim" class="domain-pill domain-pill-outline" data-domain="arsim">
+        <i class="bi bi-mortarboard"></i>
+        {% if cur_lang == 'en' %}Education{% elif cur_lang == 'mk' %}Образование{% else %}Arsim{% endif %}
+      </a>
+    </div>
+  </div>
 </div>
 
-<!-- Bloku 1: Lajmet e fundit -->
-<div class="container py-5">
+<!-- ── Active Programmes ──────────────────────────────────────── -->
+<section class="hv-section">
+  <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0"><i class="bi bi-newspaper me-2 text-primary"></i>Lajmet e Fundit</h2>
-        <a href="/lajme/" class="btn btn-sm btn-outline-primary">Të gjitha lajmet</a>
+      <div class="hv-section-title">
+        <span class="hv-section-icon hv-section-icon-purple"><i class="bi bi-collection"></i></span>
+        {% if cur_lang == 'en' %}Active Programmes{% elif cur_lang == 'mk' %}Активни програми{% else %}Programe Aktive{% endif %}
+      </div>
+      <a href="/qeveria/" class="btn-hv-ghost btn">
+        {% if cur_lang == 'en' %}View all{% elif cur_lang == 'mk' %}Сите{% else %}Të gjitha{% endif %}
+        <i class="bi bi-arrow-right ms-1"></i>
+      </a>
     </div>
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        {% for article in latest_news %}
-        <div class="col">
-            <div class="card h-100 shadow-sm border-0">
-                {% if article.cover_image %}
-                    {% image article.cover_image fill-400x200 as img %}
-                    <img src="{{ img.url }}" class="card-img-top" style="height:160px;object-fit:cover;" alt="{{ article.title }}">
-                {% else %}
-                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height:160px;">
-                        <i class="bi bi-newspaper text-white fs-2"></i>
-                    </div>
-                {% endif %}
-                <div class="card-body">
-                    <h6 class="card-title fw-bold">{{ article.title }}</h6>
-                    <p class="text-muted small">{{ article.intro|truncatewords:12 }}</p>
-                </div>
-                <div class="card-footer border-0 bg-transparent">
-                    <a href="{{ article.url }}" class="btn btn-sm btn-outline-primary w-100">Lexo</a>
-                </div>
-            </div>
-        </div>
-        {% empty %}
-        <div class="col-12 text-muted">Artikujt do të shfaqen këtu.</div>
-        {% endfor %}
-    </div>
-</div>
 
-<!-- Bloku 2: Qeveria e thjeshtë -->
-<div class="bg-light py-5">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold mb-0"><i class="bi bi-building me-2 text-success"></i>Qeveria e Thjeshtë</h2>
-            <a href="/qeveria/" class="btn btn-sm btn-outline-success">Shiko të gjitha</a>
-        </div>
-        <div class="row row-cols-1 row-cols-md-2 g-3">
-            {% for item in active_gov_items %}
-            <div class="col">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="badge
-                                {% if item.item_type == 'grant' %}bg-success
-                                {% elif item.item_type == 'tender' %}bg-primary
-                                {% elif item.item_type == 'competition' %}bg-warning text-dark
-                                {% else %}bg-secondary{% endif %}">
-                                {{ item.get_item_type_display }}
-                            </span>
-                            {% if item.deadline %}
-                                <small class="text-warning">
-                                    <i class="bi bi-clock me-1"></i>{{ item.deadline|date:"d M Y" }}
-                                </small>
-                            {% endif %}
-                        </div>
-                        <h6 class="fw-bold">{{ item.title }}</h6>
-                        {% if item.budget %}
-                            <p class="text-success small mb-1">
-                                <i class="bi bi-cash me-1"></i>{{ item.budget }}
-                            </p>
-                        {% endif %}
-                    </div>
-                    <div class="card-footer border-0 bg-transparent">
-                        <a href="{{ item.url }}" class="btn btn-sm btn-success w-100">Shiko shpjegimin</a>
-                    </div>
-                </div>
+    <div class="row row-cols-1 row-cols-md-2 g-3">
+      {% for item in active_gov_items %}
+      <div class="col">
+        <div class="hv-card domain-{{ item.domain|default:'tjeter' }}">
+          <div class="hv-card-domain-bar"></div>
+          <div class="hv-card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="hv-badge hv-badge-{{ item.item_type|default:'default' }}">
+                {{ item.get_item_type_display }}
+              </span>
+              {% if item.deadline %}
+              <small class="text-warning d-flex align-items-center gap-1">
+                <i class="bi bi-clock"></i>{{ item.deadline|date:"d M Y" }}
+              </small>
+              {% endif %}
             </div>
-            {% empty %}
-            <div class="col-12 text-muted">Njoftimet do të shfaqen këtu.</div>
-            {% endfor %}
+            <h6 class="fw-700 mb-1" style="font-size:.95rem;">{{ item.title }}</h6>
+            {% if item.budget %}
+            <p class="small mb-0" style="color:var(--hv-success);">
+              <i class="bi bi-cash me-1"></i>{{ item.budget }}
+            </p>
+            {% endif %}
+            {% if item.institution %}
+            <p class="small mb-0" style="color:var(--hv-text-muted);">
+              <i class="bi bi-building me-1"></i>{{ item.institution|truncatechars:50 }}
+            </p>
+            {% endif %}
+          </div>
+          <div class="hv-card-footer">
+            <a href="{{ item.url }}" class="btn-hv-outline btn btn-sm w-100">
+              {% if cur_lang == 'en' %}View details{% elif cur_lang == 'mk' %}Детали{% else %}Shiko detajet{% endif %}
+              <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
         </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="hv-info-banner">
+          <i class="bi bi-info-circle"></i>
+          {% if cur_lang == 'en' %}Programmes will appear here once added.
+          {% elif cur_lang == 'mk' %}Програмите ќе се прикажат кога ќе бидат додадени.
+          {% else %}Programet do të shfaqen pasi të shtohen.{% endif %}
+        </div>
+      </div>
+      {% endfor %}
     </div>
-</div>
+  </div>
+</section>
 
-<!-- Bloku 3: Video HoW -->
-<div class="container py-5">
+<!-- ── Latest News ────────────────────────────────────────────── -->
+<section class="hv-section-alt">
+  <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0"><i class="bi bi-play-circle me-2 text-danger"></i>Video HoW</h2>
-        <a href="/video/" class="btn btn-sm btn-outline-danger">Të gjitha videot</a>
+      <div class="hv-section-title">
+        <span class="hv-section-icon hv-section-icon-blue"><i class="bi bi-newspaper"></i></span>
+        {% if cur_lang == 'en' %}Latest News{% elif cur_lang == 'mk' %}Последни вести{% else %}Lajmet e Fundit{% endif %}
+      </div>
+      <a href="/lajme/" class="btn-hv-ghost btn">
+        {% if cur_lang == 'en' %}All news{% elif cur_lang == 'mk' %}Сите вести{% else %}Të gjitha{% endif %}
+        <i class="bi bi-arrow-right ms-1"></i>
+      </a>
     </div>
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        {% for video in latest_videos %}
-        <div class="col">
-            <div class="card border-0 shadow-sm h-100">
-                {% if video.cover_image %}
-                    {% image video.cover_image fill-400x225 as img %}
-                    <div class="position-relative">
-                        <img src="{{ img.url }}" class="card-img-top" style="height:160px;object-fit:cover;" alt="{{ video.title }}">
-                        <div class="position-absolute top-50 start-50 translate-middle">
-                            <i class="bi bi-play-circle-fill text-white fs-1" style="text-shadow:0 0 10px #000;"></i>
-                        </div>
-                    </div>
-                {% else %}
-                    <div class="card-img-top bg-dark d-flex align-items-center justify-content-center" style="height:160px;">
-                        <i class="bi bi-play-circle text-white fs-2"></i>
-                    </div>
-                {% endif %}
-                <div class="card-body">
-                    <h6 class="fw-bold">{{ video.title }}</h6>
-                    {% if video.presenter %}
-                        <p class="text-muted small mb-0"><i class="bi bi-person me-1"></i>{{ video.presenter }}</p>
-                    {% endif %}
-                </div>
-                <div class="card-footer border-0 bg-transparent">
-                    <a href="{{ video.url }}" class="btn btn-sm btn-danger w-100">
-                        <i class="bi bi-play me-1"></i>Shiko
-                    </a>
-                </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-3">
+      {% for article in latest_news %}
+      <div class="col">
+        <a href="{{ article.url }}" class="text-decoration-none">
+          <div class="hv-card">
+            {% if article.cover_image %}
+              {% image article.cover_image fill-400x200 as img %}
+              <img src="{{ img.url }}" class="hv-card-img" alt="{{ article.title }}">
+            {% else %}
+              <div class="hv-card-img-placeholder">
+                <i class="bi bi-newspaper text-white fs-2" style="opacity:.4;"></i>
+              </div>
+            {% endif %}
+            <div class="hv-card-body">
+              <h6 class="fw-700 mb-1" style="color:var(--hv-text-primary);font-size:.9rem;">{{ article.title }}</h6>
+              <p class="small mb-0" style="color:var(--hv-text-muted);">{{ article.intro|truncatewords:15 }}</p>
             </div>
-        </div>
-        {% empty %}
-        <div class="col-12 text-muted">Videot do të shfaqen këtu.</div>
-        {% endfor %}
+            <div class="hv-card-footer d-flex justify-content-between align-items-center">
+              <small style="color:var(--hv-text-muted);">{{ article.source_name }}</small>
+              <small style="color:var(--hv-primary);font-weight:600;">
+                {% if cur_lang == 'en' %}Read{% elif cur_lang == 'mk' %}Прочитај{% else %}Lexo{% endif %}
+                <i class="bi bi-arrow-right ms-1"></i>
+              </small>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% empty %}
+      <div class="col-12 text-muted small">
+        {% if cur_lang == 'en' %}Articles will appear here.{% elif cur_lang == 'mk' %}Написите ќе се прикажат тука.{% else %}Artikujt do të shfaqen këtu.{% endif %}
+      </div>
+      {% endfor %}
     </div>
-</div>
+  </div>
+</section>
+
+<!-- ── AI Chatbot CTA ─────────────────────────────────────────── -->
+<section class="hv-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 text-center">
+        <div class="hv-section-icon hv-section-icon-blue mx-auto mb-3" style="width:56px;height:56px;font-size:1.5rem;border-radius:16px;">
+          <i class="bi bi-robot"></i>
+        </div>
+        <h2 class="fw-800 mb-2" style="font-size:1.6rem;">
+          {% if cur_lang == 'en' %}Have a question? Ask our AI assistant
+          {% elif cur_lang == 'mk' %}Имате прашање? Прашајте го нашиот АИ асистент
+          {% else %}Keni pyetje? Pyetni asistentin tonë AI{% endif %}
+        </h2>
+        <p style="color:var(--hv-text-secondary);" class="mb-4">
+          {% if cur_lang == 'en' %}
+            Describe your situation — farmer, job seeker, parent, student — and get
+            concrete steps, required documents and exact institutions.
+          {% elif cur_lang == 'mk' %}
+            Опишете ја вашата ситуација — земјоделец, барател на работа, родител, студент —
+            и добијте конкретни чекори, потребни документи и точни институции.
+          {% else %}
+            Përshkruani situatën tuaj — fermer, punëkërkues, prind, student — dhe merrni
+            hapa konkretë, dokumentet e nevojshme dhe institucionet e sakta.
+          {% endif %}
+        </p>
+        <a href="/chat/" class="btn-hv-primary btn px-5 py-2 fs-6">
+          <i class="bi bi-chat-dots me-2"></i>
+          {% if cur_lang == 'en' %}Open Assistant{% elif cur_lang == 'mk' %}Отвори асистент{% else %}Hap Asistentin{% endif %}
+        </a>
+        <p class="small mt-2" style="color:var(--hv-text-muted);">
+          <i class="bi bi-lock me-1"></i>
+          {% if cur_lang == 'en' %}Free · Powered by Groq LLaMA 3.3{% elif cur_lang == 'mk' %}Бесплатно · Groq LLaMA 3.3{% else %}Falas · Groq LLaMA 3.3{% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
 
 {% endblock %}

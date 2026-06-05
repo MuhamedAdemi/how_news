@@ -1,134 +1,264 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block title %}Impressum — HoW Voices{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+{% get_current_language as cur_lang %}
+
+<div class="hv-section">
+<div class="container">
 <div class="row justify-content-center">
-<div class="col-lg-7">
+<div class="col-lg-8">
 
-    <h1 class="fw-bold mb-1">Impressum</h1>
-    <p class="text-muted mb-4">Informacion ligjor mbi platformën</p>
-
-    <!-- Emri i platformës -->
-    <div class="card border-0 shadow-sm mb-3">
-        <div class="card-body">
-            <h5 class="card-title fw-semibold text-primary mb-3">
-                <i class="bi bi-broadcast me-2"></i>HoW Voices
-            </h5>
-            <p class="mb-0 text-muted">
-                Platformë mediatike civile e themeluar nga House of Wisdom NGO, e dedikuar informimit
-                të komunitetit shqiptar në Republikën e Maqedonisë së Veriut.
-            </p>
-        </div>
-    </div>
-
-    <!-- Pronari -->
-    <div class="card border-0 shadow-sm mb-3">
-        <div class="card-body">
-            <h6 class="fw-semibold text-uppercase text-muted small mb-3">
-                <i class="bi bi-building me-1"></i>Pronari / Издавач
-            </h6>
-            <table class="table table-sm table-borderless mb-0">
-                <tbody>
-                    <tr>
-                        <td class="text-muted" style="width:160px;">Emri</td>
-                        <td class="fw-medium">Здружение „House of Wisdom" Пирок</td>
-                    </tr>
-                    <tr>
-                        <td class="text-muted">Numri i regjistrimit</td>
-                        <td class="fw-medium">7566336</td>
-                    </tr>
-                    <tr>
-                        <td class="text-muted">EDB</td>
-                        <td class="fw-medium">4035022504960</td>
-                    </tr>
-                    <tr>
-                        <td class="text-muted">Vendi i regjistrimit</td>
-                        <td class="fw-medium">Republika e Maqedonisë së Veriut</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Redaktori -->
-    <div class="card border-0 shadow-sm mb-3">
-        <div class="card-body">
-            <h6 class="fw-semibold text-uppercase text-muted small mb-3">
-                <i class="bi bi-person-badge me-1"></i>Redaktori Kryesor / Главен Уредник
-            </h6>
-            <p class="mb-0 fw-medium">Muhamed Ademi</p>
-        </div>
-    </div>
-
-    <!-- Adresa dhe kontakti -->
-    <div class="card border-0 shadow-sm mb-3">
-        <div class="card-body">
-            <h6 class="fw-semibold text-uppercase text-muted small mb-3">
-                <i class="bi bi-geo-alt me-1"></i>Adresa &amp; Kontakti
-            </h6>
-            <table class="table table-sm table-borderless mb-0">
-                <tbody>
-                    <tr>
-                        <td class="text-muted" style="width:160px;">Adresa</td>
-                        <td>ул. 101 бр. ББ, с. Пирок, Боговиње<br>Северна Македонија</td>
-                    </tr>
-                    <tr>
-                        <td class="text-muted">E-mail</td>
-                        <td>
-                            <a href="mailto:howvoices@gmail.com" class="text-decoration-none">
-                                howvoices@gmail.com
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-muted">Telefon</td>
-                        <td>+389 78 988 882</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Disclaimer -->
-    <div class="card border-0 bg-light mb-3">
-        <div class="card-body">
-            <h6 class="fw-semibold text-uppercase text-muted small mb-2">
-                <i class="bi bi-info-circle me-1"></i>Deklaratë
-            </h6>
-            <p class="small text-muted mb-0">
-                HoW Voices është platformë e pavarur mediatike civile. Lajmet dhe informacioni qeveritar
-                janë mbledhur nga burime publike. Platforma nuk mban përgjegjësi për saktësinë e
-                informacionit të publikuar nga palë të treta. Për çdo kërkesë ligjore ose ankesë,
-                kontaktoni redaksinë në <a href="mailto:howvoices@gmail.com">howvoices@gmail.com</a>.
-            </p>
-        </div>
-    </div>
-
-    <!-- Teknika -->
-    <div class="card border-0 bg-light mb-4">
-        <div class="card-body">
-            <h6 class="fw-semibold text-uppercase text-muted small mb-2">
-                <i class="bi bi-code-slash me-1"></i>Teknologjia
-            </h6>
-            <p class="small text-muted mb-0">
-                Platforma ndërtohet mbi Django + Wagtail CMS, me AI të integruar (Groq — LLaMA 3.3).
-                Kodi burimor është open-source:
-                <a href="https://github.com/MuhamedAdemi/how_news" target="_blank" rel="noopener"
-                   class="text-decoration-none">
-                    <i class="bi bi-github me-1"></i>github.com/MuhamedAdemi/how_news
-                </a>
-            </p>
-        </div>
-    </div>
-
-    <p class="text-center text-muted small">
-        &copy; {% now "Y" %} House of Wisdom — HoW Voices &nbsp;|&nbsp;
-        Republika e Maqedonisë së Veriut
+  <!-- Page header -->
+  <div class="mb-4">
+    <h1 class="fw-800 mb-1" style="font-size:2rem;">Impressum</h1>
+    <p style="color:var(--hv-text-secondary);">
+      {% if cur_lang == 'en' %}Legal information about this platform
+      {% elif cur_lang == 'mk' %}Правни информации за оваа платформа
+      {% else %}Informacion ligjor mbi këtë platformë{% endif %}
     </p>
+  </div>
+
+  <!-- Language tabs -->
+  <div class="hv-lang-tabs" id="langTabs">
+    <button class="hv-lang-tab {% if cur_lang == 'sq' or not cur_lang %}active{% endif %}"
+            onclick="showLang('sq', this)">🇦🇱 Shqip</button>
+    <button class="hv-lang-tab {% if cur_lang == 'mk' %}active{% endif %}"
+            onclick="showLang('mk', this)">🇲🇰 Македонски</button>
+    <button class="hv-lang-tab {% if cur_lang == 'en' %}active{% endif %}"
+            onclick="showLang('en', this)">🇬🇧 English</button>
+  </div>
+
+  <!-- Platform identity card -->
+  <div class="hv-legal-card mb-3">
+    <div class="hv-legal-card-header">
+      <h5><i class="bi bi-broadcast me-2"></i>HoW Voices</h5>
+    </div>
+    <div class="hv-legal-card-body">
+      <div id="desc-sq" class="lang-block" {% if cur_lang != 'sq' and cur_lang %}style="display:none"{% endif %}>
+        <p class="mb-0" style="color:var(--hv-text-secondary);">
+          HoW Voices është platformë mediatike civile dhe asistente AI e themeluar nga
+          <strong>House of Wisdom</strong> — organizatë jo-qeveritare e pavarur dhe jopolitike.
+          Misioni ynë: fuqizimi i komuniteteve të cënueshme dhe të margjinalizuara
+          — pa dallim kombësie, race, gjinie, moshe apo aftësie — për të aksesuar
+          shërbime qeveritare, grante dhe të drejtat e tyre.
+        </p>
+      </div>
+      <div id="desc-mk" class="lang-block" {% if cur_lang != 'mk' %}style="display:none"{% endif %}>
+        <p class="mb-0" style="color:var(--hv-text-secondary);">
+          HoW Voices е граѓанска медиумска платформа и АИ асистент основана од
+          <strong>House of Wisdom</strong> — независна, непартиска невладина организација.
+          Нашата мисија: зајакнување на ранливите и маргинализираните заедници
+          — без разлика на националноста, расата, полот, возраста или способноста —
+          за пристап до државни услуги, грантови и нивните права.
+        </p>
+      </div>
+      <div id="desc-en" class="lang-block" {% if cur_lang != 'en' %}style="display:none"{% endif %}>
+        <p class="mb-0" style="color:var(--hv-text-secondary);">
+          HoW Voices is a civic media platform and AI assistant founded by
+          <strong>House of Wisdom</strong> — an independent, non-political non-governmental organisation.
+          Our mission: empowering vulnerable and marginalised communities
+          — regardless of nationality, race, gender, age or ability —
+          to access government services, grants and their rights.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Owner / Publisher -->
+  <div class="hv-legal-card mb-3">
+    <div class="hv-legal-card-header">
+      <h5>
+        <i class="bi bi-building me-2"></i>
+        <span id="owner-sq" class="lang-block" {% if cur_lang != 'sq' and cur_lang %}style="display:none"{% endif %}>Pronari / Botuesi</span>
+        <span id="owner-mk" class="lang-block" {% if cur_lang != 'mk' %}style="display:none"{% endif %}>Сопственик / Издавач</span>
+        <span id="owner-en" class="lang-block" {% if cur_lang != 'en' %}style="display:none"{% endif %}>Owner / Publisher</span>
+      </h5>
+    </div>
+    <div class="hv-legal-card-body">
+      <table class="hv-legal-table">
+        <tbody>
+          <tr>
+            <th>
+              <span class="lang-block" id="label-name-sq" {% if cur_lang != 'sq' and cur_lang %}style="display:none"{% endif %}>Emri</span>
+              <span class="lang-block" id="label-name-mk" {% if cur_lang != 'mk' %}style="display:none"{% endif %}>Ime</span>
+              <span class="lang-block" id="label-name-en" {% if cur_lang != 'en' %}style="display:none"{% endif %}>Name</span>
+            </th>
+            <td class="fw-600">Здружение „House of Wisdom" Пирок</td>
+          </tr>
+          <tr>
+            <th>
+              <span class="lang-block" {% if cur_lang != 'sq' and cur_lang %}style="display:none"{% endif %}>Nr. regjistrimit</span>
+              <span class="lang-block" {% if cur_lang != 'mk' %}style="display:none"{% endif %}>Регистарски број</span>
+              <span class="lang-block" {% if cur_lang != 'en' %}style="display:none"{% endif %}>Registration No.</span>
+            </th>
+            <td class="fw-600 font-monospace">7566336</td>
+          </tr>
+          <tr>
+            <th>EDB / ЕДБ / Tax ID</th>
+            <td class="fw-600 font-monospace">4035022504960</td>
+          </tr>
+          <tr>
+            <th>
+              <span class="lang-block" {% if cur_lang != 'sq' and cur_lang %}style="display:none"{% endif %}>Vendi i regjistrimit</span>
+              <span class="lang-block" {% if cur_lang != 'mk' %}style="display:none"{% endif %}>Место на регистрација</span>
+              <span class="lang-block" {% if cur_lang != 'en' %}style="display:none"{% endif %}>Registered in</span>
+            </th>
+            <td>Republika e Maqedonisë së Veriut / Република Северна Македонија</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Editor -->
+  <div class="hv-legal-card mb-3">
+    <div class="hv-legal-card-header">
+      <h5>
+        <i class="bi bi-person-badge me-2"></i>
+        <span class="lang-block" {% if cur_lang != 'sq' and cur_lang %}style="display:none"{% endif %}>Redaktori Kryesor</span>
+        <span class="lang-block" {% if cur_lang != 'mk' %}style="display:none"{% endif %}>Главен уредник</span>
+        <span class="lang-block" {% if cur_lang != 'en' %}style="display:none"{% endif %}>Editor in Chief</span>
+      </h5>
+    </div>
+    <div class="hv-legal-card-body">
+      <p class="mb-0 fw-600 fs-5">Muhamed Ademi</p>
+    </div>
+  </div>
+
+  <!-- Contact & Address -->
+  <div class="hv-legal-card mb-3">
+    <div class="hv-legal-card-header">
+      <h5>
+        <i class="bi bi-geo-alt me-2"></i>
+        <span class="lang-block" {% if cur_lang != 'sq' and cur_lang %}style="display:none"{% endif %}>Adresa &amp; Kontakti</span>
+        <span class="lang-block" {% if cur_lang != 'mk' %}style="display:none"{% endif %}>Адреса &amp; Контакт</span>
+        <span class="lang-block" {% if cur_lang != 'en' %}style="display:none"{% endif %}>Address &amp; Contact</span>
+      </h5>
+    </div>
+    <div class="hv-legal-card-body">
+      <table class="hv-legal-table">
+        <tbody>
+          <tr>
+            <th>
+              <span class="lang-block" {% if cur_lang != 'sq' and cur_lang %}style="display:none"{% endif %}>Adresa</span>
+              <span class="lang-block" {% if cur_lang != 'mk' %}style="display:none"{% endif %}>Адреса</span>
+              <span class="lang-block" {% if cur_lang != 'en' %}style="display:none"{% endif %}>Address</span>
+            </th>
+            <td>
+              ул. 101 бр. ББ, с. Пирок<br>
+              Боговиње, Северна Македонија
+            </td>
+          </tr>
+          <tr>
+            <th>E-mail</th>
+            <td><a href="mailto:howvoices@gmail.com" class="text-primary fw-600">howvoices@gmail.com</a></td>
+          </tr>
+          <tr>
+            <th>
+              <span class="lang-block" {% if cur_lang != 'sq' and cur_lang %}style="display:none"{% endif %}>Telefon</span>
+              <span class="lang-block" {% if cur_lang != 'mk' %}style="display:none"{% endif %}>Телефон</span>
+              <span class="lang-block" {% if cur_lang != 'en' %}style="display:none"{% endif %}>Phone</span>
+            </th>
+            <td class="fw-600">+389 78 988 882</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tech & Disclaimer -->
+  <div class="hv-legal-card mb-4">
+    <div class="hv-legal-card-header">
+      <h5><i class="bi bi-code-slash me-2"></i>
+        <span class="lang-block" {% if cur_lang != 'sq' and cur_lang %}style="display:none"{% endif %}>Teknologjia &amp; Deklaratë</span>
+        <span class="lang-block" {% if cur_lang != 'mk' %}style="display:none"{% endif %}>Технологија &amp; Изјава</span>
+        <span class="lang-block" {% if cur_lang != 'en' %}style="display:none"{% endif %}>Technology &amp; Disclaimer</span>
+      </h5>
+    </div>
+    <div class="hv-legal-card-body">
+      <div class="lang-block" {% if cur_lang != 'sq' and cur_lang %}style="display:none"{% endif %}>
+        <p class="small mb-2" style="color:var(--hv-text-secondary);">
+          Platforma ndërtohet mbi Django + Wagtail CMS, me AI të integruar (Groq — LLaMA 3.3).
+          Kodi burimor është open-source:
+          <a href="https://github.com/MuhamedAdemi/how_news" target="_blank" rel="noopener">
+            <i class="bi bi-github me-1"></i>github.com/MuhamedAdemi/how_news
+          </a>
+        </p>
+        <p class="small mb-0" style="color:var(--hv-text-secondary);">
+          HoW Voices është platformë e pavarur. Lajmet dhe informacioni qeveritar janë mbledhur
+          nga burime publike. Platforma nuk mban përgjegjësi për saktësinë e informacionit të
+          publikuar nga palë të treta. Për ankesa kontaktoni <a href="mailto:howvoices@gmail.com">howvoices@gmail.com</a>.
+        </p>
+      </div>
+      <div class="lang-block" {% if cur_lang != 'mk' %}style="display:none"{% endif %}>
+        <p class="small mb-2" style="color:var(--hv-text-secondary);">
+          Платформата е изградена врз Django + Wagtail CMS со интегриран АИ (Groq — LLaMA 3.3).
+          Изворниот код е отворен:
+          <a href="https://github.com/MuhamedAdemi/how_news" target="_blank" rel="noopener">
+            <i class="bi bi-github me-1"></i>github.com/MuhamedAdemi/how_news
+          </a>
+        </p>
+        <p class="small mb-0" style="color:var(--hv-text-secondary);">
+          HoW Voices е независна платформа. Вестите и владините информации се собрани
+          од јавни извори. Платформата не е одговорна за точноста на информациите
+          објавени од трети страни. За поплаки контактирајте <a href="mailto:howvoices@gmail.com">howvoices@gmail.com</a>.
+        </p>
+      </div>
+      <div class="lang-block" {% if cur_lang != 'en' %}style="display:none"{% endif %}>
+        <p class="small mb-2" style="color:var(--hv-text-secondary);">
+          Platform built on Django + Wagtail CMS with integrated AI (Groq — LLaMA 3.3).
+          Source code is open-source:
+          <a href="https://github.com/MuhamedAdemi/how_news" target="_blank" rel="noopener">
+            <i class="bi bi-github me-1"></i>github.com/MuhamedAdemi/how_news
+          </a>
+        </p>
+        <p class="small mb-0" style="color:var(--hv-text-secondary);">
+          HoW Voices is an independent platform. News and government information is collected
+          from public sources. The platform is not responsible for the accuracy of information
+          published by third parties. For complaints contact <a href="mailto:howvoices@gmail.com">howvoices@gmail.com</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <p class="text-center small" style="color:var(--hv-text-muted);">
+    &copy; {% now "Y" %} House of Wisdom — HoW Voices &nbsp;·&nbsp; Republika e Maqedonisë së Veriut
+  </p>
 
 </div>
 </div>
 </div>
+</div>
+
+<script>
+function showLang(lang, btn) {
+  document.querySelectorAll('.lang-block').forEach(el => el.style.display = 'none');
+  document.querySelectorAll(`[id$="-${lang}"], .lang-block[id^="label-"]`).forEach(el => {
+    if (el.id && el.id.endsWith('-' + lang)) el.style.display = '';
+  });
+  // Show all blocks that match the lang suffix
+  document.querySelectorAll('[id]').forEach(el => {
+    if (el.id.endsWith('-' + lang)) el.style.display = '';
+  });
+  // Also show non-id lang blocks - use class
+  document.querySelectorAll('.lang-block:not([id])').forEach(el => {
+    el.style.display = '';
+  });
+  document.querySelectorAll('.hv-lang-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// Init: show correct lang
+document.addEventListener('DOMContentLoaded', function() {
+  const activeLang = '{{ cur_lang|default:"sq" }}';
+  document.querySelectorAll('.lang-block').forEach(el => {
+    if (el.id) {
+      el.style.display = el.id.endsWith('-' + activeLang) ? '' : 'none';
+    }
+  });
+});
+</script>
 {% endblock %}
