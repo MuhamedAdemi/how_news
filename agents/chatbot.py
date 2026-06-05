@@ -66,9 +66,14 @@ DOMAIN_KEYWORDS_MAP = {
     "biznes": ["biznes", "ndërmarrje", "SME", "startup", "eksport",
                "investim", "kompani", "shoqëri", "tregtar", "regjistrim biznesi"],
     "ambient": ["ambient", "ekologji", "mjedis", "energji e rinovueshme",
-                "klimë", "riciklim", "ndotje", "pyje", "ujë"],
+                "klimë", "riciklim", "ndotje", "pyje", "ujë", "diell",
+                "panel diellor", "fotovoltaik", "solar", "erë", "biomasë",
+                "izolim", "eficiencë energjetike", "CO2", "emision",
+                "pyllëzim", "gjelbër", "natyrë", "biodiversitet"],
     "arsim": ["arsim", "edukim", "rini", "student", "shkollë", "bursë",
-              "universitet", "gjimnaz", "trajnim", "kualifikim"],
+              "universitet", "gjimnaz", "trajnim", "kualifikim",
+              "diplomë", "maturë", "regjistrim universitar", "kredi studentore",
+              "Erasmus", "çerdhe", "kopësht", "mësimdhënës"],
 }
 
 
