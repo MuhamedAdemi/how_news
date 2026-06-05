@@ -84,6 +84,7 @@ class GovIndexPage(Page):
         context = super().get_context(request)
         item_type = request.GET.get("type", "")
         status = request.GET.get("status", GovItemStatus.ACTIVE)
+        domain = request.GET.get("domain", "")
 
         items = GovItemPage.objects.child_of(self).live().order_by("-first_published_at")
 
@@ -91,6 +92,8 @@ class GovIndexPage(Page):
             items = items.filter(item_type=item_type)
         if status:
             items = items.filter(status=status)
+        if domain:
+            items = items.filter(domain=domain)
 
         paginator = Paginator(items, 9)
         page_num = request.GET.get("faqe", 1)

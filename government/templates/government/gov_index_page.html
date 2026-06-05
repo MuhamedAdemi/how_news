@@ -1,91 +1,145 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags %}
+{% load wagtailcore_tags i18n %}
 
-{% block title %}Qeveria e Thjeshtë{% endblock %}
+{% block title %}{% get_current_language as cur_lang %}{% if cur_lang == 'en' %}Programmes{% elif cur_lang == 'mk' %}Програми{% else %}Programe{% endif %} — HoW Voices{% endblock %}
 
 {% block content %}
+{% get_current_language as cur_lang %}
+
+<!-- Page header -->
+<div style="background:var(--hv-primary-dark);padding:2rem 0 1.5rem;">
+  <div class="container">
+    <h1 class="fw-800 text-white mb-1" style="font-size:1.8rem;">
+      <i class="bi bi-collection me-2" style="color:#60A5FA;"></i>
+      {% if cur_lang == 'en' %}Government Programmes{% elif cur_lang == 'mk' %}Државни програми{% else %}Programe Qeveritare{% endif %}
+    </h1>
+    <p style="color:rgba(255,255,255,.65);margin:0;font-size:.9rem;">
+      {% if cur_lang == 'en' %}Grants, subsidies, tenders and social programmes — explained simply
+      {% elif cur_lang == 'mk' %}Грантови, субвенции, тендери и социјални програми — едноставно објаснети
+      {% else %}Grante, subvencione, tenderë dhe programe sociale — të shpjeguara qartë{% endif %}
+    </p>
+  </div>
+</div>
+
 <div class="container py-4">
-    <div class="row mb-4">
-        <div class="col">
-            <h1 class="fw-bold"><i class="bi bi-building me-2 text-success"></i>Qeveria e Thjeshtë</h1>
-            <p class="lead text-muted">Konkurse, grante, fonde dhe njoftime qeveritare — të shpjeguara qartë.</p>
-        </div>
-    </div>
 
-    <!-- Filtrat -->
-    <div class="row mb-4">
-        <div class="col">
-            <form method="get" class="d-flex flex-wrap gap-2">
-                <select name="type" class="form-select form-select-sm w-auto">
-                    <option value="">Të gjitha llojet</option>
-                    {% for value, label in item_types %}
-                        <option value="{{ value }}" {% if current_type == value %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
-                <select name="status" class="form-select form-select-sm w-auto">
-                    {% for value, label in statuses %}
-                        <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
-                <button type="submit" class="btn btn-success btn-sm">
-                    <i class="bi bi-funnel me-1"></i>Filtro
-                </button>
-                <a href="/qeveria/" class="btn btn-outline-secondary btn-sm">Pastro</a>
-            </form>
-        </div>
-    </div>
+  <!-- Domain filter pills -->
+  <div class="domain-filters mb-4">
+    <a href="/qeveria/" class="domain-pill {% if not request.GET.domain %}domain-pill-all{% else %}domain-pill-outline{% endif %}">
+      <i class="bi bi-grid-3x3-gap-fill"></i>
+      {% if cur_lang == 'en' %}All{% elif cur_lang == 'mk' %}Сите{% else %}Të gjitha{% endif %}
+    </a>
+    <a href="?domain=punesim" class="domain-pill domain-pill-outline {% if request.GET.domain == 'punesim' %}active-pill{% endif %}" data-domain="punesim">
+      <i class="bi bi-briefcase"></i>{% if cur_lang == 'en' %}Employment{% elif cur_lang == 'mk' %}Вработување{% else %}Punësim{% endif %}
+    </a>
+    <a href="?domain=social" class="domain-pill domain-pill-outline {% if request.GET.domain == 'social' %}active-pill{% endif %}" data-domain="social">
+      <i class="bi bi-people"></i>{% if cur_lang == 'en' %}Social & Family{% elif cur_lang == 'mk' %}Социјала{% else %}Social{% endif %}
+    </a>
+    <a href="?domain=biznes" class="domain-pill domain-pill-outline {% if request.GET.domain == 'biznes' %}active-pill{% endif %}" data-domain="biznes">
+      <i class="bi bi-building-up"></i>{% if cur_lang == 'en' %}Business{% elif cur_lang == 'mk' %}Бизнис{% else %}Biznes{% endif %}
+    </a>
+    <a href="?domain=rural" class="domain-pill domain-pill-outline {% if request.GET.domain == 'rural' %}active-pill{% endif %}" data-domain="rural">
+      <i class="bi bi-tree"></i>Rural / IPARD
+    </a>
+    <a href="?domain=bujqesi" class="domain-pill domain-pill-outline {% if request.GET.domain == 'bujqesi' %}active-pill{% endif %}" data-domain="bujqesi">
+      <i class="bi bi-flower1"></i>{% if cur_lang == 'en' %}Agriculture{% elif cur_lang == 'mk' %}Земјоделство{% else %}Bujqësi{% endif %}
+    </a>
+    <a href="?domain=ambient" class="domain-pill domain-pill-outline {% if request.GET.domain == 'ambient' %}active-pill{% endif %}" data-domain="ambient">
+      <i class="bi bi-wind"></i>{% if cur_lang == 'en' %}Environment{% elif cur_lang == 'mk' %}Животна средина{% else %}Mjedis{% endif %}
+    </a>
+    <a href="?domain=arsim" class="domain-pill domain-pill-outline {% if request.GET.domain == 'arsim' %}active-pill{% endif %}" data-domain="arsim">
+      <i class="bi bi-mortarboard"></i>{% if cur_lang == 'en' %}Education{% elif cur_lang == 'mk' %}Образование{% else %}Arsim{% endif %}
+    </a>
+    <a href="?domain=shendet" class="domain-pill domain-pill-outline {% if request.GET.domain == 'shendet' %}active-pill{% endif %}" data-domain="shendet">
+      <i class="bi bi-heart-pulse"></i>{% if cur_lang == 'en' %}Health{% elif cur_lang == 'mk' %}Здравство{% else %}Shëndetësi{% endif %}
+    </a>
+  </div>
 
-    <div class="row row-cols-1 row-cols-md-2 g-4">
-        {% for item in items %}
-        <div class="col">
-            <div class="card h-100 shadow-sm border-0">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <span class="badge
-                            {% if item.item_type == 'grant' %}bg-success
-                            {% elif item.item_type == 'tender' %}bg-primary
-                            {% elif item.item_type == 'competition' %}bg-warning text-dark
-                            {% elif item.item_type == 'law' %}bg-secondary
-                            {% else %}bg-info text-dark{% endif %}">
-                            {{ item.get_item_type_display }}
-                        </span>
-                        <span class="badge {% if item.status == 'active' %}bg-success{% elif item.status == 'upcoming' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
-                            {{ item.get_status_display }}
-                        </span>
-                    </div>
-                    <h5 class="card-title">{{ item.title }}</h5>
-                    {% if item.institution %}
-                        <p class="text-muted small mb-1">
-                            <i class="bi bi-building me-1"></i>{{ item.institution }}
-                        </p>
-                    {% endif %}
-                    {% if item.budget %}
-                        <p class="text-success fw-bold small mb-1">
-                            <i class="bi bi-cash me-1"></i>{{ item.budget }}
-                        </p>
-                    {% endif %}
-                    {% if item.deadline %}
-                        <p class="small mb-2 {% if item.status == 'expired' %}text-danger{% else %}text-warning{% endif %}">
-                            <i class="bi bi-clock me-1"></i>Afati: {{ item.deadline|date:"d M Y" }}
-                        </p>
-                    {% endif %}
-                </div>
-                <div class="card-footer border-0 bg-transparent">
-                    <a href="{{ item.url }}" class="btn btn-success btn-sm w-100">
-                        <i class="bi bi-info-circle me-1"></i>Shiko shpjegimin
-                    </a>
-                </div>
-            </div>
-        </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="alert alert-info">
-                <i class="bi bi-info-circle me-2"></i>Nuk ka njoftime aktive. Shto nga paneli admin.
-            </div>
-        </div>
+  <!-- Type/Status filter row -->
+  <div class="hv-legal-card mb-4 p-3" style="border-radius:var(--hv-radius);">
+    <form method="get" class="d-flex flex-wrap gap-2 align-items-center">
+      {% if request.GET.domain %}
+        <input type="hidden" name="domain" value="{{ request.GET.domain }}">
+      {% endif %}
+      <select name="type" class="form-select form-select-sm w-auto" style="border-color:var(--hv-border);font-size:.85rem;">
+        <option value="">{% if cur_lang == 'en' %}All types{% elif cur_lang == 'mk' %}Сите типови{% else %}Të gjitha llojet{% endif %}</option>
+        {% for value, label in item_types %}
+          <option value="{{ value }}" {% if current_type == value %}selected{% endif %}>{{ label }}</option>
         {% endfor %}
-    </div>
+      </select>
+      <select name="status" class="form-select form-select-sm w-auto" style="border-color:var(--hv-border);font-size:.85rem;">
+        {% for value, label in statuses %}
+          <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn-hv-primary btn btn-sm">
+        <i class="bi bi-funnel me-1"></i>{% if cur_lang == 'en' %}Filter{% elif cur_lang == 'mk' %}Филтрирај{% else %}Filtro{% endif %}
+      </button>
+      <a href="/qeveria/" class="btn-hv-ghost btn btn-sm">{% if cur_lang == 'en' %}Clear{% elif cur_lang == 'mk' %}Исчисти{% else %}Pastro{% endif %}</a>
+    </form>
+  </div>
 
+  <!-- Programme cards -->
+  <div class="row row-cols-1 row-cols-md-2 g-3">
+    {% for item in items %}
+    <div class="col">
+      <div class="hv-card domain-{{ item.domain|default:'tjeter' }}">
+        <div class="hv-card-domain-bar"></div>
+        <div class="hv-card-body">
+          <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-1">
+            <span class="hv-badge hv-badge-{{ item.item_type|default:'default' }}">
+              {{ item.get_item_type_display }}
+            </span>
+            <span class="hv-badge {% if item.status == 'active' %}hv-badge-grant{% elif item.status == 'upcoming' %}hv-badge-rural{% else %}hv-badge-default{% endif %}">
+              {{ item.get_status_display }}
+            </span>
+          </div>
+
+          <h6 class="fw-700 mb-2" style="font-size:.95rem;color:var(--hv-text-primary);line-height:1.4;">{{ item.title }}</h6>
+
+          {% if item.institution %}
+            <p class="small mb-1 d-flex align-items-start gap-1" style="color:var(--hv-text-muted);">
+              <i class="bi bi-building mt-1" style="flex-shrink:0;"></i>{{ item.institution|truncatechars:60 }}
+            </p>
+          {% endif %}
+
+          {% if item.budget %}
+            <p class="small mb-1 fw-600 d-flex align-items-center gap-1" style="color:var(--hv-success);">
+              <i class="bi bi-cash-stack"></i>{{ item.budget }}
+            </p>
+          {% endif %}
+
+          {% if item.deadline %}
+            <p class="small mb-0 d-flex align-items-center gap-1" style="color:var(--hv-warning);">
+              <i class="bi bi-clock"></i>
+              {% if cur_lang == 'en' %}Deadline{% elif cur_lang == 'mk' %}Рок{% else %}Afati{% endif %}:
+              {{ item.deadline|date:"d M Y" }}
+            </p>
+          {% endif %}
+        </div>
+        <div class="hv-card-footer">
+          <a href="{{ item.url }}" class="btn-hv-outline btn btn-sm w-100">
+            <i class="bi bi-info-circle me-1"></i>
+            {% if cur_lang == 'en' %}View details{% elif cur_lang == 'mk' %}Детали{% else %}Shiko shpjegimin{% endif %}
+          </a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+      <div class="hv-info-banner">
+        <i class="bi bi-info-circle"></i>
+        {% if cur_lang == 'en' %}No programmes found for this filter.
+        {% elif cur_lang == 'mk' %}Нема програми за овој филтер.
+        {% else %}Nuk ka njoftime aktive për këtë filtrim.{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="mt-4">
     {% include "includes/pagination.html" with page_obj=items %}
+  </div>
+
 </div>
 {% endblock %}

@@ -1,97 +1,123 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags i18n %}
 
-{% block title %}Lajme{% endblock %}
+{% block title %}{% get_current_language as cur_lang %}{% if cur_lang == 'en' %}News{% elif cur_lang == 'mk' %}Вести{% else %}Lajme{% endif %} — HoW Voices{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row mb-3">
-        <div class="col">
-            <h1 class="fw-bold"><i class="bi bi-newspaper me-2 text-primary"></i>Lajme Ditore</h1>
-            {% if page.intro %}
-                <div class="lead text-muted">{{ page.intro|richtext }}</div>
-            {% endif %}
-        </div>
-    </div>
+{% get_current_language as cur_lang %}
 
-    <!-- Filtrat: Gjuha -->
-    <div class="mb-2 d-flex flex-wrap gap-2 align-items-center">
-        <span class="text-muted small me-1"><i class="bi bi-translate me-1"></i>Gjuha:</span>
+<!-- Page header -->
+<div style="background:var(--hv-primary-dark);padding:2rem 0 1.5rem;">
+  <div class="container">
+    <h1 class="fw-800 text-white mb-1" style="font-size:1.8rem;">
+      <i class="bi bi-newspaper me-2" style="color:#60A5FA;"></i>
+      {% if cur_lang == 'en' %}Daily News{% elif cur_lang == 'mk' %}Дневни вести{% else %}Lajme Ditore{% endif %}
+    </h1>
+    <p style="color:rgba(255,255,255,.65);margin:0;font-size:.9rem;">
+      {% if cur_lang == 'en' %}Aggregated from 12+ sources in Albanian, Macedonian and English
+      {% elif cur_lang == 'mk' %}Агрегирано од 12+ извори на албански, македонски и англиски
+      {% else %}Të mbledhura nga 12+ burime në Shqip, Maqedonisht dhe Anglisht{% endif %}
+    </p>
+  </div>
+</div>
+
+<div class="container py-4">
+
+  <!-- Filter bar -->
+  <div class="hv-legal-card mb-4 p-3" style="border-radius:var(--hv-radius);">
+    <form method="get" class="d-flex flex-wrap gap-2 align-items-center">
+
+      <!-- Language pills -->
+      <div class="d-flex align-items-center gap-1 me-2">
+        <i class="bi bi-translate" style="color:var(--hv-text-muted);"></i>
         <a href="/lajme/{% if current_category %}?kategoria={{ current_category }}{% endif %}"
-           class="btn btn-sm {% if not current_language %}btn-primary{% else %}btn-outline-secondary{% endif %}">
-            Te gjitha
+           class="domain-pill {% if not current_language %}domain-pill-all{% else %}domain-pill-outline{% endif %}" style="font-size:.78rem;padding:.3rem .8rem;">
+          {% if cur_lang == 'en' %}All{% elif cur_lang == 'mk' %}Сите{% else %}Të gjitha{% endif %}
         </a>
         {% for code, name in languages %}
         <a href="?gjuha={{ code }}{% if current_category %}&amp;kategoria={{ current_category }}{% endif %}"
-           class="btn btn-sm {% if current_language == code %}btn-primary{% else %}btn-outline-secondary{% endif %}">
-            {{ name }}
+           class="domain-pill domain-pill-outline {% if current_language == code %}active-pill{% endif %}" style="font-size:.78rem;padding:.3rem .8rem;">
+          {{ name }}
         </a>
         {% endfor %}
-    </div>
+      </div>
 
-    <!-- Filtrat: Kategoria -->
-    {% if categories %}
-    <div class="mb-4 d-flex flex-wrap gap-2 align-items-center">
-        <span class="text-muted small me-1"><i class="bi bi-tag me-1"></i>Kategoria:</span>
+      <!-- Category pills -->
+      {% if categories %}
+      <div class="d-flex align-items-center gap-1 flex-wrap">
+        <i class="bi bi-tag" style="color:var(--hv-text-muted);"></i>
         <a href="/lajme/{% if current_language %}?gjuha={{ current_language }}{% endif %}"
-           class="btn btn-sm {% if not current_category %}btn-info{% else %}btn-outline-secondary{% endif %}">
-            Te gjitha
+           class="domain-pill {% if not current_category %}domain-pill-all{% else %}domain-pill-outline{% endif %}" style="font-size:.78rem;padding:.3rem .8rem;">
+          {% if cur_lang == 'en' %}All categories{% elif cur_lang == 'mk' %}Сите категории{% else %}Të gjitha{% endif %}
         </a>
         {% for cat in categories %}
         <a href="?kategoria={{ cat.slug }}{% if current_language %}&amp;gjuha={{ current_language }}{% endif %}"
-           class="btn btn-sm {% if current_category == cat.slug %}btn-info{% else %}btn-outline-secondary{% endif %}">
-            {{ cat.name }}
+           class="domain-pill domain-pill-outline {% if current_category == cat.slug %}active-pill{% endif %}" style="font-size:.78rem;padding:.3rem .8rem;">
+          {{ cat.name }}
         </a>
         {% endfor %}
-    </div>
-    {% endif %}
+      </div>
+      {% endif %}
 
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        {% for article in articles %}
-        <div class="col">
-            <div class="card h-100 shadow-sm">
-                {% if article.cover_image %}
-                    {% image article.cover_image fill-400x250 as img %}
-                    <img src="{{ img.url }}" class="card-img-top" alt="{{ article.title }}" style="height:200px;object-fit:cover;">
-                {% else %}
-                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height:200px;">
-                        <i class="bi bi-newspaper text-white fs-1"></i>
-                    </div>
-                {% endif %}
-                <div class="card-body">
-                    <div class="d-flex gap-1 mb-2">
-                        {% if article.category %}
-                            <span class="badge bg-primary">{{ article.category.name }}</span>
-                        {% endif %}
-                        {% if article.language != 'sq' %}
-                            <span class="badge bg-secondary">{{ article.get_language_display }}</span>
-                        {% endif %}
-                    </div>
-                    <h5 class="card-title">{{ article.title }}</h5>
-                    {% if article.intro %}
-                        <p class="card-text text-muted small">{{ article.intro|truncatewords:20 }}</p>
-                    {% endif %}
-                </div>
-                <div class="card-footer d-flex justify-content-between align-items-center">
-                    <small class="text-muted">
-                        <i class="bi bi-calendar3 me-1"></i>{{ article.first_published_at|date:"d M Y" }}
-                        {% if article.source_name %}
-                            &middot; <i class="bi bi-rss me-1"></i>{{ article.source_name }}
-                        {% endif %}
-                    </small>
-                    <a href="{{ article.url }}" class="btn btn-sm btn-outline-primary">Lexo</a>
-                </div>
-            </div>
-        </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="alert alert-info">
-                <i class="bi bi-info-circle me-2"></i>Nuk ka lajme per kete filtrim.
-            </div>
-        </div>
-        {% endfor %}
-    </div>
+    </form>
+  </div>
 
+  <!-- Articles grid -->
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+    {% for article in articles %}
+    <div class="col">
+      <a href="{{ article.url }}" class="text-decoration-none d-block h-100">
+        <div class="hv-card h-100">
+          {% if article.cover_image %}
+            {% image article.cover_image fill-400x220 as img %}
+            <img src="{{ img.url }}" class="hv-card-img" alt="{{ article.title }}">
+          {% else %}
+            <div class="hv-card-img-placeholder">
+              <i class="bi bi-newspaper text-white fs-2" style="opacity:.4;"></i>
+            </div>
+          {% endif %}
+          <div class="hv-card-body">
+            <div class="d-flex gap-1 mb-2 flex-wrap">
+              {% if article.category %}
+                <span class="hv-badge hv-badge-default">{{ article.category.name }}</span>
+              {% endif %}
+              {% if article.language and article.language != 'sq' %}
+                <span class="hv-badge hv-badge-default">{{ article.get_language_display }}</span>
+              {% endif %}
+            </div>
+            <h6 class="fw-700 mb-1" style="color:var(--hv-text-primary);font-size:.9rem;line-height:1.4;">{{ article.title }}</h6>
+            {% if article.intro %}
+              <p class="small mb-0" style="color:var(--hv-text-muted);">{{ article.intro|truncatewords:18 }}</p>
+            {% endif %}
+          </div>
+          <div class="hv-card-footer d-flex justify-content-between align-items-center">
+            <small style="color:var(--hv-text-muted);">
+              <i class="bi bi-calendar3 me-1"></i>{{ article.first_published_at|date:"d M Y" }}
+              {% if article.source_name %}&nbsp;·&nbsp;{{ article.source_name }}{% endif %}
+            </small>
+            <small style="color:var(--hv-primary);font-weight:600;">
+              {% if cur_lang == 'en' %}Read{% elif cur_lang == 'mk' %}Прочитај{% else %}Lexo{% endif %}
+              <i class="bi bi-arrow-right ms-1"></i>
+            </small>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% empty %}
+    <div class="col-12">
+      <div class="hv-info-banner">
+        <i class="bi bi-info-circle"></i>
+        {% if cur_lang == 'en' %}No articles found for this filter.
+        {% elif cur_lang == 'mk' %}Нема написи за овој филтер.
+        {% else %}Nuk ka lajme për këtë filtrim.{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="mt-4">
     {% include "includes/pagination.html" with page_obj=articles query_string=filter_params %}
+  </div>
+
 </div>
 {% endblock %}
