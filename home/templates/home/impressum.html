@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Impressum — HoW Voices{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+<div class="row justify-content-center">
+<div class="col-lg-7">
+
+    <h1 class="fw-bold mb-1">Impressum</h1>
+    <p class="text-muted mb-4">Informacion ligjor mbi platformën</p>
+
+    <!-- Emri i platformës -->
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <h5 class="card-title fw-semibold text-primary mb-3">
+                <i class="bi bi-broadcast me-2"></i>HoW Voices
+            </h5>
+            <p class="mb-0 text-muted">
+                Platformë mediatike civile e themeluar nga House of Wisdom NGO, e dedikuar informimit
+                të komunitetit shqiptar në Republikën e Maqedonisë së Veriut.
+            </p>
+        </div>
+    </div>
+
+    <!-- Pronari -->
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <h6 class="fw-semibold text-uppercase text-muted small mb-3">
+                <i class="bi bi-building me-1"></i>Pronari / Издавач
+            </h6>
+            <table class="table table-sm table-borderless mb-0">
+                <tbody>
+                    <tr>
+                        <td class="text-muted" style="width:160px;">Emri</td>
+                        <td class="fw-medium">Здружение „House of Wisdom" Пирок</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Numri i regjistrimit</td>
+                        <td class="fw-medium">7566336</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">EDB</td>
+                        <td class="fw-medium">4035022504960</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Vendi i regjistrimit</td>
+                        <td class="fw-medium">Republika e Maqedonisë së Veriut</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Redaktori -->
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <h6 class="fw-semibold text-uppercase text-muted small mb-3">
+                <i class="bi bi-person-badge me-1"></i>Redaktori Kryesor / Главен Уредник
+            </h6>
+            <p class="mb-0 fw-medium">Muhamed Ademi</p>
+        </div>
+    </div>
+
+    <!-- Adresa dhe kontakti -->
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <h6 class="fw-semibold text-uppercase text-muted small mb-3">
+                <i class="bi bi-geo-alt me-1"></i>Adresa &amp; Kontakti
+            </h6>
+            <table class="table table-sm table-borderless mb-0">
+                <tbody>
+                    <tr>
+                        <td class="text-muted" style="width:160px;">Adresa</td>
+                        <td>ул. 101 бр. ББ, с. Пирок, Боговиње<br>Северна Македонија</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">E-mail</td>
+                        <td>
+                            <a href="mailto:howvoices@gmail.com" class="text-decoration-none">
+                                howvoices@gmail.com
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Telefon</td>
+                        <td>+389 78 988 882</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="card border-0 bg-light mb-3">
+        <div class="card-body">
+            <h6 class="fw-semibold text-uppercase text-muted small mb-2">
+                <i class="bi bi-info-circle me-1"></i>Deklaratë
+            </h6>
+            <p class="small text-muted mb-0">
+                HoW Voices është platformë e pavarur mediatike civile. Lajmet dhe informacioni qeveritar
+                janë mbledhur nga burime publike. Platforma nuk mban përgjegjësi për saktësinë e
+                informacionit të publikuar nga palë të treta. Për çdo kërkesë ligjore ose ankesë,
+                kontaktoni redaksinë në <a href="mailto:howvoices@gmail.com">howvoices@gmail.com</a>.
+            </p>
+        </div>
+    </div>
+
+    <!-- Teknika -->
+    <div class="card border-0 bg-light mb-4">
+        <div class="card-body">
+            <h6 class="fw-semibold text-uppercase text-muted small mb-2">
+                <i class="bi bi-code-slash me-1"></i>Teknologjia
+            </h6>
+            <p class="small text-muted mb-0">
+                Platforma ndërtohet mbi Django + Wagtail CMS, me AI të integruar (Groq — LLaMA 3.3).
+                Kodi burimor është open-source:
+                <a href="https://github.com/MuhamedAdemi/how_news" target="_blank" rel="noopener"
+                   class="text-decoration-none">
+                    <i class="bi bi-github me-1"></i>github.com/MuhamedAdemi/how_news
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <p class="text-center text-muted small">
+        &copy; {% now "Y" %} House of Wisdom — HoW Voices &nbsp;|&nbsp;
+        Republika e Maqedonisë së Veriut
+    </p>
+
+</div>
+</div>
+</div>
+{% endblock %}

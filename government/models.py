@@ -15,12 +15,27 @@ class GovItemType(models.TextChoices):
     COMPETITION = "competition", "Konkurs"
     LAW = "law", "Ligj / Rregullore"
     ANNOUNCEMENT = "announcement", "Njoftim"
+    SUBSIDY = "subsidy", "Subvencion"
+    LOAN = "loan", "Kredi / Hua"
 
 
 class GovItemStatus(models.TextChoices):
     ACTIVE = "active", "Aktiv"
     UPCOMING = "upcoming", "Se shpejti"
     EXPIRED = "expired", "Ka skaduar"
+
+
+class ProgramDomain(models.TextChoices):
+    AGRICULTURE = "bujqesi", "Bujqësi"
+    LIVESTOCK = "blegtori", "Blegtori"
+    RURAL = "rural", "Zhvillim Rural"
+    SOCIAL = "social", "Social / Familje"
+    EMPLOYMENT = "punesim", "Punësim"
+    BUSINESS = "biznes", "Biznes / SME"
+    ENVIRONMENT = "ambient", "Ambient / Energji"
+    EDUCATION = "arsim", "Arsim / Rini"
+    HEALTH = "shendet", "Shëndetësi"
+    OTHER = "tjeter", "Tjetër"
 
 
 @register_snippet
@@ -138,6 +153,27 @@ class GovItemPage(Page):
         verbose_name="URL burimi (per deduplikim)",
     )
 
+    domain = models.CharField(
+        max_length=20,
+        choices=ProgramDomain.choices,
+        default=ProgramDomain.OTHER,
+        blank=True,
+        verbose_name="Domeni",
+        help_text="Fusha: bujqësi, blegtori, social, punësim...",
+    )
+
+    eligible_who = models.TextField(
+        blank=True,
+        verbose_name="Kush ka të drejtë",
+        help_text="Kushtet e eligibilitetit — kush mund të aplikojë",
+    )
+
+    documents_required = models.TextField(
+        blank=True,
+        verbose_name="Dokumentet e nevojshme",
+        help_text="Një dokument për rresht",
+    )
+
     # Shpjegimi i thjeshtë - kjo është vlera kryesore e platformës
     simple_explanation = RichTextField(
         blank=True,
@@ -166,20 +202,28 @@ class GovItemPage(Page):
 
     search_fields = Page.search_fields + [
         index.SearchField("simple_explanation"),
+        index.SearchField("eligible_who"),
+        index.SearchField("documents_required"),
         index.FilterField("item_type"),
+        index.FilterField("domain"),
         index.FilterField("status"),
         index.FilterField("deadline"),
     ]
 
     content_panels = Page.content_panels + [
         MultiFieldPanel([
+            FieldPanel("domain"),
             FieldPanel("item_type"),
             FieldPanel("status"),
             FieldPanel("institution"),
             FieldPanel("deadline"),
             FieldPanel("budget"),
             FieldPanel("original_url"),
-        ], heading="Detajet"),
+        ], heading="Klasifikimi"),
+        MultiFieldPanel([
+            FieldPanel("eligible_who"),
+            FieldPanel("documents_required"),
+        ], heading="Eligibiliteti & Dokumentet"),
         FieldPanel("simple_explanation"),
         FieldPanel("how_to_apply"),
     ]

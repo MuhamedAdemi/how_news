@@ -91,8 +91,13 @@ python manage.py fetch_feeds --limit 20
 # Informacion qeveritar (pa AI)
 python manage.py fetch_gov --limit 5
 
-# Informacion qeveritar me AI (kërkon ANTHROPIC_API_KEY)
+# Informacion qeveritar me AI (Groq/LLaMA — falas)
 python manage.py fetch_gov --ai --limit 5
+
+# Thirrjet publike nga MLS (Ministria e Punës dhe Politikës Sociale)
+python manage.py fetch_mls --limit 20       # merr + AI klasifikim
+python manage.py fetch_mls --dry            # shfaq pa ruajtur
+python manage.py fetch_mls --no-ai          # vetem scraping, pa AI
 
 # Proceso URL specifike zyrtare me AI
 python manage.py process_url https://vlada.mk/mk-MK/...
@@ -101,8 +106,15 @@ python manage.py process_url https://vlada.mk/mk-MK/...
 python manage.py seed_gov_urls         # proceson URL-t e reja
 python manage.py seed_gov_urls --dry   # shfaq statusin pa procesuar
 
-# Shëno si të skaduara GovItemPage-t me afat të kaluar
-python manage.py expire_gov_items  # (në zhvillim)
+# Skadoj automatikisht njoftimet me afat te kaluar
+python manage.py expire_gov_items              # skadoj + fsheh nga faqja
+python manage.py expire_gov_items --dry        # shfaq pa ndryshuar
+python manage.py expire_gov_items --keep-live  # skadoj por lere te dukshem
+python manage.py expire_gov_items --purge-days 90  # fshi te vjetrat >90 dite
+
+# Perditesim ditor automatik (te gjitha se bashku)
+scripts\daily_update.bat    # Windows
+scripts/daily_update.sh     # Linux/Server (shto ne cron: 0 6 * * *)
 ```
 
 ---

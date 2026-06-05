@@ -13,26 +13,72 @@ from news.models import NewsArticlePage
 
 CHATBOT_MODEL = "llama-3.3-70b-versatile"
 
-SYSTEM_PROMPT = """Ti je asistenti inteligjent i platformes "HoW News" — iniciative e House of Wisdom per qytetaret shqiptare te Republikes se Maqedonise se Veriut.
+SYSTEM_PROMPT = """Ti je "Asistenti HoW" — keshilltar personal per qytetaret shqiptare te Republikes se Maqedonise se Veriut (RMV), i specializuar per:
+- Subvencione dhe grante bujqesore (MZSV, IPARD, programet nacionale)
+- Ndihma sociale dhe punesim (MTSP, Agjencia e Punesimit)
+- Thirrje publike dhe grante per OJQ dhe biznes
+- Procedura administrative dhe dokumente
 
-Misioni yt: T'i ndihmosh qytetareve te kuptojne dhe te aksesojne sherbimet publike, tenderrat, grantet, ligjet dhe njoftimet qeveritare te RMV, ne gjuhe te thjeshte shqipe.
+MENYRA E PUNES:
+Kur personi te tregon kush eshte (bujk, bletor, i papune, etj.) dhe cfare ka nevojë — ti i pergjigesh si nje keshilltar i informuar, si nje sherbyes shteteror qe di gjithcka dhe ndihmon me zemre.
 
-Rregullat:
-- Pergjigju VETEM ne Shqip, te qarte dhe te thjeshte
-- Kur ke informacion nga baza e te dhenave, cito titullin dhe linkun
-- Nese nuk ke informacion te mjaftueshem, thuaj sinqerisht dhe keshillo per ku te gjeje
-- Mos jep keshilla juridike zyrtare
-- Per afate dhe shuma, ji i sakte
-- Pergjigja maksimale: 300 fjale"""
+RREGULLAT:
+
+1. LEXO profilin e personit: profesioni, lokacioni, lloji i aktivitetit, shkalla (hektare, krerë bagëtie, etj.)
+2. IDENTIFIKO programin/subvencionin me te pershtatshme per kete profil
+3. JEP hapat konkrete: 1, 2, 3... — jo tekst te pergjithshem
+4. LISTA dokumentet e sakta: cilesoji dokumentet zyrtare sipas emrit
+5. TREGO institucionin e sakte: emri i plote, jo vetem "komuna"
+6. SHUMA dhe AFATE: thuaj shumat orientuese dhe afatin zakonisht
+7. CITO burimet nga DB kur ke (thirrje aktive, grante, lajme)
+8. Nese baza e platformes nuk ka te dhena, perdor njohurite per sistemin maqedonas
+
+PER BUJQIT DHE BLEGTORET:
+- Institucioni kryesor: Ministria e Bujqesise, Pylltarise dhe Ujrave (MBPU) + Agjensia per Mbeshtetje Financiare ne Bujqesi (AMFB/AFSARD)
+- Subvencione direkte per: grure, misri, perimet, fruta, vreshtat, bageti
+- IPARD III (2023-2027): investime per fermat, pajisje, ndertesa
+- Aplikimet zakonisht: Janar-Mars cdo vit, ne Inspektoriatin Rajonal te Bujqesise
+
+PER SOCIALE:
+- Institucioni: Qendra per Pune Sociale ne komunen perkatese
+- Dokumentet baze: kartes identiteti, certifikata lindjeje, deklarata e gjendjes materiale
+
+GJUHA: Gjithmone Shqip, e qarte, miqesore — si te flasesh me fqinjin tende qe di gjithcka.
+GJATESIA: max 400 fjale, me numra dhe lista."""
+
+
+DOMAIN_KEYWORDS_MAP = {
+    "bujqesi": ["bujq", "ferm", "tok", "bim", "mal", "domat", "pept", "grur", "misër", "vresht", "arë"],
+    "blegtori": ["blegtor", "dele", "lopë", "kafsh", "bagëti", "mish", "qumësht", "tufë", "ahur", "traktor"],
+    "rural": ["rural", "fshat", "IPARD", "LEADER", "zhvillim vendor"],
+    "social": ["sociale", "familje", "fëmij", "pension", "invalid", "ndihm", "varfëri"],
+    "punesim": ["punësim", "punë", "papunësi", "trajnim", "punëdhën", "punëkërkues", "karrierë"],
+    "biznes": ["biznes", "ndërmarrje", "SME", "startup", "eksport", "invest", "kompani"],
+    "ambient": ["ambient", "ekolog", "mjedis", "energji", "klimë", "riciklim"],
+    "arsim": ["arsim", "edukim", "rini", "student", "shkollë", "bursë", "universit"],
+}
+
+
+def _detect_domain(query: str) -> str | None:
+    q = query.lower()
+    for domain, keywords in DOMAIN_KEYWORDS_MAP.items():
+        if any(k.lower() in q for k in keywords):
+            return domain
+    return None
 
 
 def build_context(query: str) -> str:
-    """Kerkon permbajtjen relevante per pyetjen — RAG retrieval."""
-    gov_results = list(
-        GovItemPage.objects.live()
-        .filter(status=GovItemStatus.ACTIVE)
-        .search(query)[:5]
-    )
+    """Kerkon permbajtjen relevante per pyetjen — RAG retrieval me domain detection."""
+    domain = _detect_domain(query)
+
+    qs = GovItemPage.objects.live().filter(status=GovItemStatus.ACTIVE)
+    if domain:
+        domain_results = list(qs.filter(domain=domain).search(query)[:4])
+        other_results = list(qs.exclude(domain=domain).search(query)[:2])
+        gov_results = domain_results + other_results
+    else:
+        gov_results = list(qs.search(query)[:5])
+
     news_results = list(
         NewsArticlePage.objects.live().search(query)[:3]
     )
@@ -42,14 +88,19 @@ def build_context(query: str) -> str:
     for item in gov_results:
         explanation = re.sub(r"<[^>]+>", " ", item.simple_explanation or "")
         explanation = " ".join(explanation.split())[:300]
+        docs = item.documents_required.strip() if item.documents_required else ""
+        eligible = item.eligible_who.strip() if item.eligible_who else ""
         parts.append(
-            f"[QEVERIA] {item.title}\n"
+            f"[PROGRAM] {item.title}\n"
+            f"Domain: {item.get_domain_display() if hasattr(item, 'get_domain_display') else item.domain} | "
             f"Lloji: {item.get_item_type_display()} | "
             f"Statusi: {item.get_status_display()}\n"
             f"Institucioni: {item.institution or '—'}\n"
-            f"Buxheti: {item.budget or '—'} | "
+            f"Buxheti/Shuma: {item.budget or '—'} | "
             f"Afati: {item.deadline.strftime('%d %b %Y') if item.deadline else '—'}\n"
-            f"Shpjegimi: {explanation}\n"
+            + (f"Kush ka te drejte: {eligible}\n" if eligible else "")
+            + (f"Dokumentet: {docs}\n" if docs else "")
+            + f"Shpjegimi: {explanation}\n"
             f"Link: {item.original_url or '(pa link)'}"
         )
 
