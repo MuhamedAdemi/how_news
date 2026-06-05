@@ -8,6 +8,7 @@ source venv/bin/activate
 echo "[$(date)] Duke filluar perditesimin ditor..."
 
 python manage.py fetch_feeds --limit 30
+python manage.py translate_news --limit 50
 python manage.py fetch_gov --ai --limit 10
 python manage.py fetch_mls --limit 20
 python manage.py fetch_agriculture --limit 15

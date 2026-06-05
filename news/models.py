@@ -140,6 +140,9 @@ class NewsArticlePage(Page):
     )
 
     intro = models.TextField(max_length=500, blank=True)
+    intro_sq = models.TextField(max_length=600, blank=True, help_text="Përkthim shqip (AI)")
+    intro_mk = models.TextField(max_length=600, blank=True, help_text="Превод македонски (AI)")
+    intro_en = models.TextField(max_length=600, blank=True, help_text="English translation (AI)")
 
     language = models.CharField(
         max_length=2,

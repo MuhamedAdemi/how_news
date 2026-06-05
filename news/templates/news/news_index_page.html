@@ -86,9 +86,13 @@
               {% endif %}
             </div>
             <h6 class="fw-700 mb-1" style="color:var(--hv-text-primary);font-size:.9rem;line-height:1.4;">{{ article.title }}</h6>
-            {% if article.intro %}
-              <p class="small mb-0" style="color:var(--hv-text-muted);">{{ article.intro|truncatewords:18 }}</p>
-            {% endif %}
+            <p class="small mb-0" style="color:var(--hv-text-muted);">
+              {% if cur_lang == 'en' and article.intro_en %}{{ article.intro_en|truncatewords:18 }}
+              {% elif cur_lang == 'mk' and article.intro_mk %}{{ article.intro_mk|truncatewords:18 }}
+              {% elif article.intro_sq %}{{ article.intro_sq|truncatewords:18 }}
+              {% elif article.intro %}{{ article.intro|truncatewords:18 }}
+              {% endif %}
+            </p>
           </div>
           <div class="hv-card-footer d-flex justify-content-between align-items-center">
             <small style="color:var(--hv-text-muted);">
