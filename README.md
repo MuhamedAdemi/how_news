@@ -1,6 +1,6 @@
 # HoW News — Platforma Qytetare e House of Wisdom
 
-> **Informacion qytetar, qeveria e thjeshtë dhe edukim për shqiptarët e Maqedonisë së Veriut**
+> **Informacion qytetar, qeveria e thjeshtë dhe edukim për qytetarët e Maqedonisë së Veriut**
 
 [![Django](https://img.shields.io/badge/Django-5.2-green)](https://djangoproject.com)
 [![Wagtail](https://img.shields.io/badge/Wagtail-7.4-blue)](https://wagtail.org)
@@ -11,9 +11,9 @@
 
 ## Misioni
 
-HoW News është një platformë open-source e ndërtuar nga **House of Wisdom (HoW)** — OJQ e dedikuar ndaj emancipimit, edukimit dhe mbrojtjes së të drejtave të shqiptarëve në Republikën e Maqedonisë së Veriut.
+HoW News është një platformë open-source e ndërtuar nga **House of Wisdom (HoW)** — OJQ e dedikuar ndaj emancipimit, edukimit dhe mbrojtjes së të drejtave të qytetarëve në Republikën e Maqedonisë së Veriut.
 
-Platforma i shërben komunitetit shqiptar në RMV duke:
+Platforma i shërben qytetarët e Maqedonisë së Veriut  duke:
 - **Thjeshtësuar informacionin zyrtar qeveritar** — tenderë, grante, njoftime — në gjuhë të kuptueshme
 - **Mbledhur lajme** nga burime shqipe dhe maqedonase në një vend
 - **Ofherjë asistent AI** që i ndihmon qytetarët të kuptojnë procedurat administrative
@@ -147,9 +147,9 @@ how_news/
 
 ## Impakti Social
 
-**Popullatë e synuar:** ~500,000 shqiptarë në Republikën e Maqedonisë së Veriut
+**Popullatë e synuar:**qytetarët në Republikën e Maqedonisë së Veriut
 
-**Problemi:** Informacioni zyrtar qeveritar publikohet ekskluzivisht në Maqedonisht dhe me gjuhë tekniko-juridike, duke e bërë të paarritshem për komunitetin shqiptar.
+**Problemi:** Informacioni zyrtar qeveritar publikohet ekskluzivisht në Maqedonisht dhe me gjuhë tekniko-juridike, duke e bërë të paarritshem për komunitetin shqiptar ne këtë e thjeshtojm dhe e përshtatim edhe në shqip edhe në anglisht.
 
 **Zgjidhja jonë:** Agregim automatik + AI thjeshtëson + chatbot i aksesueshëm.
 
@@ -175,4 +175,4 @@ MIT License — shih [LICENSE](LICENSE).
 
 ---
 
-*Ndërtuar me ❤️ për komunitetin shqiptar të Maqedonisë së Veriut*
+*Ndërtuar me ❤️ për të ndihmuar qytetarët e Maqedonisë së Veriut*
