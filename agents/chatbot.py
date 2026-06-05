@@ -48,21 +48,42 @@ GJATESIA: max 400 fjale, me numra dhe lista."""
 
 
 DOMAIN_KEYWORDS_MAP = {
-    "bujqesi": ["bujq", "ferm", "tok", "bim", "mal", "domat", "pept", "grur", "misër", "vresht", "arë"],
-    "blegtori": ["blegtor", "dele", "lopë", "kafsh", "bagëti", "mish", "qumësht", "tufë", "ahur", "traktor"],
-    "rural": ["rural", "fshat", "IPARD", "LEADER", "zhvillim vendor"],
-    "social": ["sociale", "familje", "fëmij", "pension", "invalid", "ndihm", "varfëri"],
-    "punesim": ["punësim", "punë", "papunësi", "trajnim", "punëdhën", "punëkërkues", "karrierë"],
-    "biznes": ["biznes", "ndërmarrje", "SME", "startup", "eksport", "invest", "kompani"],
-    "ambient": ["ambient", "ekolog", "mjedis", "energji", "klimë", "riciklim"],
-    "arsim": ["arsim", "edukim", "rini", "student", "shkollë", "bursë", "universit"],
+    "bujqesi": ["bujqesi", "bujqësi", "fermer", "fermë", "tokë bujqësore", "mbjellë",
+                "mbjellur", "domate", "perime", "grurë", "misër", "vresht", "pemë",
+                "malina", "mjedër", "limon", "mollë", "dardhë", "korrje", "fidane"],
+    "blegtori": ["blegtori", "blegëtori", "dele", "lopë", "kafshë", "bagëti",
+                 "qumësht", "tufë", "ahur", "traktor", "krerë", "dhi", "gjedhe",
+                 "pulë", "derri", "plotë", "stallë"],
+    "rural": ["rural", "IPARD", "LEADER", "zhvillim rural", "zhvillim vendor",
+              "fshatar", "zona rurale"],
+    "social": ["ndihmë sociale", "ndihma sociale", "sociale", "familje",
+               "fëmijë", "pension", "pensionist", "invalid", "aftësi kufizuara",
+               "varfëri", "strehim social", "mbrojtje sociale"],
+    "punesim": ["punësim", "punëkërkues", "papunësi", "papunë", "nuk kam punë",
+                "kërkoj punë", "pa punë", "punëdhënës", "punëmarrës",
+                "regjistrim punë", "trajnim punësimi", "subvencion punë",
+                "vetëpunësim", "biznes i ri", "punë", "punëtor"],
+    "biznes": ["biznes", "ndërmarrje", "SME", "startup", "eksport",
+               "investim", "kompani", "shoqëri", "tregtar", "regjistrim biznesi"],
+    "ambient": ["ambient", "ekologji", "mjedis", "energji e rinovueshme",
+                "klimë", "riciklim", "ndotje", "pyje", "ujë"],
+    "arsim": ["arsim", "edukim", "rini", "student", "shkollë", "bursë",
+              "universitet", "gjimnaz", "trajnim", "kualifikim"],
 }
 
 
+def _normalize(text: str) -> str:
+    """Heq aksentet per krahasim — ë→e, ç→c etj."""
+    return (text.lower()
+            .replace("ë", "e").replace("ç", "c")
+            .replace("ä", "a").replace("ö", "o").replace("ü", "u")
+            .replace("š", "s").replace("ž", "z").replace("č", "c"))
+
+
 def _detect_domain(query: str) -> str | None:
-    q = query.lower()
+    q = _normalize(query)
     for domain, keywords in DOMAIN_KEYWORDS_MAP.items():
-        if any(k.lower() in q for k in keywords):
+        if any(_normalize(k) in q for k in keywords):
             return domain
     return None
 
@@ -73,9 +94,13 @@ def build_context(query: str) -> str:
 
     qs = GovItemPage.objects.live().filter(status=GovItemStatus.ACTIVE)
     if domain:
-        domain_results = list(qs.filter(domain=domain).search(query)[:4])
-        other_results = list(qs.exclude(domain=domain).search(query)[:2])
-        gov_results = domain_results + other_results
+        # Search brenda domain — nese pak rezultate, merr te fundit nga ai domain
+        search_hits = list(qs.filter(domain=domain).search(query)[:4])
+        if len(search_hits) < 2:
+            search_hits = list(qs.filter(domain=domain).order_by("-first_published_at")[:4])
+        # Shto rezultate nga domenë të tjera me search të plotë
+        extra = list(qs.exclude(domain=domain).search(query)[:2])
+        gov_results = search_hits + extra
     else:
         gov_results = list(qs.search(query)[:5])
 
@@ -141,7 +166,7 @@ def chat(question: str, history: list | None = None) -> dict:
         }
 
     context = build_context(question)
-    source_count = context.count("[QEVERIA]") + context.count("[LAJM]")
+    source_count = context.count("[PROGRAM]") + context.count("[LAJM]")
 
     # Groq (OpenAI-compatible): system message si elementi i pare
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
