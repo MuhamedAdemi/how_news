@@ -30,5 +30,6 @@ USER wagtail
 # Collect static files at build time (dummy key — never used at runtime)
 RUN SECRET_KEY=collectstatic-build-placeholder python manage.py collectstatic --noinput --clear
 
-# Migrate + start Gunicorn
-CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn how_news.wsgi:application --bind 0.0.0.0:${PORT} --workers 2 --timeout 120"]
+RUN chmod +x start.sh
+
+CMD ["./start.sh"]
