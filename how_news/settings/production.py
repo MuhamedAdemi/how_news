@@ -49,6 +49,12 @@ if _railway_domain:
     ALLOWED_HOSTS.append(_railway_domain)
     CSRF_TRUSTED_ORIGINS.append(f"https://{_railway_domain}")
 
+# Auto-detect Render deployment domain
+_render_domain = os.environ.get("RENDER_EXTERNAL_HOSTNAME", "")
+if _render_domain:
+    ALLOWED_HOSTS.append(_render_domain)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{_render_domain}")
+
 # URL bazë e admin Wagtail — përdoret në email-et e njoftimit
 WAGTAILADMIN_BASE_URL = env("WAGTAILADMIN_BASE_URL", default="http://localhost:8000")
 
