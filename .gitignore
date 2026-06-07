@@ -11,3 +11,6 @@ static/
 how_news/settings/local.py
 .DS_Store
 Thumbs.db
+cloudflared.exe
+start_tunnel.bat
+=0.11.0
